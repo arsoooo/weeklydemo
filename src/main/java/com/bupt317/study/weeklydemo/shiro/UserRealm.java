@@ -31,10 +31,9 @@ public class UserRealm extends AuthorizingRealm {
         Subject subject = SecurityUtils.getSubject();
         // principal是从认证逻辑里面传来的第一个参数，即user
         User user = (User)subject.getPrincipal();
-        User dbUser = userService.findByid(user.getId());
         // 根据perms授权
-        if (dbUser.getPerms() != null)
-            info.addStringPermission(dbUser.getPerms());
+        if (user.getPerms() != null)
+            info.addStringPermission(user.getPerms());
 
         return info;
     }

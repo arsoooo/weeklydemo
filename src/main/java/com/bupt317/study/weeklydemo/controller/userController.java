@@ -19,7 +19,8 @@ public class userController {
     @RequestMapping("/test")
     public String testThymeleaf(Model model){
         //存入model
-        model.addAttribute("name", "Thymeleaf");
+//        System.out.println("testThymeleaf");
+        model.addAttribute("name", "Thyme]leaf");
         //返回test.html
         return "test";
     }
@@ -44,11 +45,11 @@ public class userController {
         try {
 //        3.执行登录方法subject.login(token);
             subject.login(token);
-//        正确跳转
-            return "redirect:/test";
+//        正确跳转test控制器
+            return "redirect:test";
         }catch(UnknownAccountException e){
             model.addAttribute("msg", "用户名不存在！");
-            // 跳
+            // 直接跳html，有m要传
             return "login/login";
         }catch (IncorrectCredentialsException e) {
             model.addAttribute("msg", "密码不正确！");
