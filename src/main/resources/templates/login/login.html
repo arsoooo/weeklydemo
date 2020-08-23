@@ -1,23 +1,177 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>登录页面</title>
+    <title>实验室人员管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type=text/css href="layui/css/layui.css" media="all">
+    <link rel="stylesheet" type=text/css href="css/login.css">
+    <script src="js/jquery/2.0.0/jquery.min.js"></script>
+    <script src="layer/layer.js"></script>
+    <script src="layui/layui.js" charset="utf-8"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
 </head>
-<body>
+<body background="img/login/1.jpg">
 
-<h3>请输入用户名和密码:</h3>
+<div class="login bg-black ">
+    <form class="layui-form bg-blue" action="">
+        <div class="layui-form-item margin-top-10">
+            <label class="layui-form-label">用户名
+                <i class="layui-icon">&#xe66f;</i>
+            </label>
+            <div class="layui-input-inline">
+                <!-- //采用inline表示可以继续放 -->
+                <input type="username" name="username" required lay-verify="username" placeholder="请输入用户名"
+                       autocomplete="off" class="layui-input" lay-verType="msg">
+            </div>
+            <!-- <div class="layui-form-mid layui-word-aux"></div> -->
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码
+                <i class="layui-icon"> &#xe672;</i>
+            </label>
+            <div class="layui-input-inline">
+                <input type="userpassword" name="userpassword" required lay-verify="userpassword" placeholder="请输入密码"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
 
-<form method="post" action="login">
-    用户名：<input th:value="${name}" type="text" name="name"><br>
-    密码：<input type="password" name="password"><br>
-    <input type="submit" value="登录">
-</form>
-
-<!--打印错误信息-->
-<h3 th:text="${msg}" style="color: red"></h3>
-
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-block">
+                <input type="radio" name="role" value="teacher" title="老师" checked>
+                <input type="radio" name="role" value="student" title="学生">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="checkbox" name="" title="记住我" lay-skin="primary" checked>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" onclick="return false" lay-submit lay-filter="login">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    //Demo 拿到你所需要用的layui已经封装好的代码
+    layui.use(['jquery', 'form', 'layer'], function () {
+        let $ = layui.jquery;
+        let form = layui.form;//表单验证
+        let layer = layui.layer;
+        //表单验证（页面自动关联,验证结果绑定在表单）
+        form.verify({
+            username: function (value, item) { //value：表单的值、item：表单的DOM对象 自定义验证规则
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            },
+            userpassword: function (value, item) {
+                if (!/^.{1,12}$/img.test(value)) {
+                    return "密码必须位1~12位"
+                }
+            }
+        });
+        //不想提交，可以监听，使用form.on
+        form.on('submit(login)', function (formData) {
+            if (formData.field.role === "teacher") {
+                $.ajax({
+                    url: '/login',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        //监听的内容有哪些,你的登陆界面上用户输入的有哪些，就监听那些
+                        name: $('input[name="username"]').val(),
+                        password: $('input[name="userpassword"]').val()
+                    },
+                    beforeSend: function () {
+                        //弹出的lodinng层
+                        layer.load(2, {
+                            shade: [0.5, "#333"]
+                        });
+                    },
+                    success: function (res) {
+                        if (res.code == 0) {
+                                //res.code == 0,表示用户输入成功，1表示失败
+                            //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
+                            layer.msg("登陆成功", {icon: 1})
+                            setTimeout(function () {
+                                //如果输入成功，可以跳到另一个你需要的界面
+                                location.href = "adminHome";
+                            }, 1000)
+                        } else {
+                            //不等于0时填出的内容
+                            layer.msg(res.msg)
+                        }
+                    },
+                    error: function () {
+                        //用户输入与接口内容不对应，显示文字
+                        layer.msg("网络繁忙，访问失败")
+                    },
+                    complete: function () {
+                        //关掉loading
+                        layer.closeAll("loading")
+                    }
+                })
+            } else {
+                $.ajax({
+                    url: 'login',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        //监听的内容有哪些,你的登陆界面上用户输入的有哪些，就监听那些
+                        name: $('input[name="username"]').val(),
+                        password: $('input[name="userpassword"]').val()
+                    },
+                    beforeSend: function () {
+                        //弹出的lodinng层
+                        layer.load(2, {
+                            shade: [0.5, "#333"]
+                        });
+                    },
+                    success: function (res) {
+                        console.log(res)
+                        if (res.code == 0) {
+                            //res.code == 0,表示用户输入成功，1表示失败
+                            //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
+                            layer.msg("登陆成功", {icon: 1})
+                            setTimeout(function () {
+                                //如果输入成功，可以跳到另一个你需要的界面
+                                location.href = "studentHome";
+                            }, 1000)
+                        } else {
+                            //不等于0时填出的内容
+                            layer.msg(res.msg)
+                        }
+                    },
+                    error: function () {
+                        //用户输入与接口内容不对应，显示文字
+                        layer.msg("网络繁忙，访问失败")
+                    },
+                    complete: function () {
+                        //关掉loading
+                        layer.closeAll("loading")
+                    }
+                })
+            }
+            //用ajax时需要注意你的url接口、采用哪一种方式type获取，它的使用的哪种数据类型datatype
+            /**
+             * ./ 当前目录
+             * ../前目录
+             * / 跟目录
+             * 什么也没写就是当前路径
+             */
+            return false;//不会跳转到网址栏，只会跳转到你要的界面 一定要写。
+        });
+    });
+</script>
 </body>
 </html>
