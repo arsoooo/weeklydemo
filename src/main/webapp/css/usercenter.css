@@ -1,0 +1,42 @@
+#icon{
+    width: 140px;
+    height: 140px;
+    background: #7fee1d;
+    -moz-border-radius: 70px;
+    -webkit-border-radius: 70px;
+    border-radius: 70px;
+}
+.user{
+    height: 160px;
+    width: 160px;
+    float: left;
+    padding: 10px;
+}
+#name{
+    padding: 50px;
+    font-family: Arial;
+    font-size: 20px;
+}
+#icon2{
+    width: 30px;
+    height: 30px;
+}
+#table{
+    margin-top: -10px;
+    background-color: #ffffff;
+}
+#info-itme1{
+    font-size: 20px;
+}
+#info-itme1 div{
+    text-decoration:underline darkgray;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 25px;
+}
+#info-itme1 a{
+    font-size: 15px;
+    float: right;
+    padding-right: 200px;
+}

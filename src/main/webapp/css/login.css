@@ -1,0 +1,18 @@
+.login{
+    width: 420px;
+    height: 280px;
+    min-height: 320px;
+    max-height: 280px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    padding: 20px;
+    z-index: 130;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 3px 18px rgba(100, 0, 0, .5);
+    font-size: 16px;
+}

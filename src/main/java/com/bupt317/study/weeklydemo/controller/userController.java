@@ -1,103 +1,61 @@
 package com.bupt317.study.weeklydemo.controller;
 
-import com.bupt317.study.weeklydemo.pojo.User;
+import com.bupt317.study.weeklydemo.service.UserService;
+import com.bupt317.study.weeklydemo.vo.DataVO;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class userController {
 
-    /*
-    * 跳测试页面（主页面）
-    * */
-    @RequestMapping("/test")
-    public String testThymeleaf(Model model){
-        //存入model
-//        System.out.println("testThymeleaf");
-        model.addAttribute("name", "Thyme]leaf");
-        //返回test.html
-        return "test";
-    }
+    @Autowired
+    private UserService userService;
 
-    /*
-     * 未登录拦截，跳登录页面
-     * */
-    @RequestMapping("/toLogin")
-    public String tologin(){
-        return "login/login";
-    }
-
-    /*
+    /**
      * 对输入的账户密码登录验证
      * */
-    @RequestMapping("/login")
-    public String login(String name, String password, Model model){
-//        1.SecurityUtils获得subject
+    @PostMapping("/login")
+    public Object login(
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "password") String password
+//            @RequestBody User user,
+//            Model model
+    ){
+        System.out.println(name+password);
+        // 1.SecurityUtils获得subject
         Subject subject = SecurityUtils.getSubject();
-//        2.UsernamePasswordToken存user进去
+        // 2.UsernamePasswordToken存user进去
         UsernamePasswordToken token = new UsernamePasswordToken(name, password);
         try {
-//        3.执行登录方法subject.login(token);
+            // 3.执行登录方法subject.login(token) -> 执行认证逻辑
             subject.login(token);
-//        正确跳转test控制器
-            return "redirect:test";
+            // 正确跳转test控制器
+            return DataVO.success();
         }catch(UnknownAccountException e){
-            model.addAttribute("msg", "用户名不存在！");
+//            model.addAttribute("msg", "用户名不存在！");
             // 直接跳html，有m要传
-            return "login/login";
+            System.out.println("用户名不存在！");
+            return DataVO.fail("用户名不存在！");
         }catch (IncorrectCredentialsException e) {
-            model.addAttribute("msg", "密码不正确！");
-            model.addAttribute("name", name);
-            return "login/login";
+//            model.addAttribute("msg", "密码不正确！");
+//            model.addAttribute("name", name);
+            System.out.println("密码不正确！");
+            return DataVO.fail("密码不正确！");
         }
     }
 
-    /*
-     * 跳转未授权提示页面
-     * */
-    @RequestMapping("/noAuthor")
-    public String noAuth(Model model){
-
-        return "admin/noAuthor";
+    /**
+     * 查询所有UserVO -> DataVO.data
+     */
+    @GetMapping("/users")
+    public DataVO findUsers(){
+        return userService.findData();
     }
 
-    /*
-     * 管理员页面
-     * */
-    @RequestMapping("/adminManager")
-    public String adminManager(Model model){
-        // 测试一下能不能拿到当前user
-        Subject subject = SecurityUtils.getSubject();
-        User user = (User)subject.getPrincipal();
-        model.addAttribute("user", user);
-        return "admin/adminManager";
-    }
 
-    /*
-    * 跳增加用户页面
-    * */
-    @RequestMapping("/add")
-    public String add(){
-        return "user/add";
-    }
-
-    /*
-    * 跳修改用户页面
-    * */
-    @RequestMapping("/update")
-    public String update(){
-        return "user/update";
-    }
-
-    /*
-     * 退出登录
-     * */
-    @RequestMapping("/logout")
-    public void logout(){}
 }

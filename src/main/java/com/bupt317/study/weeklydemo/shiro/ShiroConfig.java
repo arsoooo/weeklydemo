@@ -1,6 +1,6 @@
 package com.bupt317.study.weeklydemo.shiro;
 
-import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import com.bupt317.study.weeklydemo.config.StaticParams;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -38,25 +38,33 @@ public class ShiroConfig{
         // （资源路径，配置）
 //        filerMap.put("/add", "authc");
 //        filerMap.put("/update", "authc");
-        // 主页面test.html
-        filerMap.put("/test", "anon");
-        // 登录页面login.html
-        filerMap.put("/login", "anon");
-        // 授权过滤器
-        filerMap.put("/adminManager", "perms[admin:manager]");
-        // 退出登录按钮
-        filerMap.put("/logout", "logout");
-        // 拦截其他页面
-        filerMap.put("/**", "authc");
+        //静态资源
+//        filerMap.put("/../webapp/**", "anon");
+        filerMap.put("/css/**", "anon");  // 注：每个都设置也可以
+        filerMap.put("/img/**", "anon");
+        filerMap.put("/js/**", "anon");
+        filerMap.put("/layer/**", "anon");
+        filerMap.put("/layui/**", "anon");
+        // 临时
+        filerMap.put("/**", "anon");
+        // 主页面
+//        filerMap.put("/home", "anon");
+//        // 登录页面(管理员和普通用户都跳转至此)
+//        filerMap.put("/login", "anon");
+//        // 授权过滤器(到底是文件夹还是方法名？ - 可能是都拦截)
+//        // 授权过滤器 - 换成了包含admin的所有控制器跳转
+//        filerMap.put("/admin*", StaticParams.ADMIN_PERMS);
+//        // 退出登录按钮
+//        filerMap.put("/logout", "logout");
+//        // 拦截其他页面（需要认证）
+//        filerMap.put("/**", "authc");
 
-        // 设置未授权的页面
-        shiroFilterFactoryBean.setUnauthorizedUrl("noAuthor");
-
-        // 拦截后，跳转到该页面
+        // 认证后但是未授权跳转的页面
+        shiroFilterFactoryBean.setUnauthorizedUrl("/noAuthor");
+        // 无认证，拦截后，跳转到该页面
         shiroFilterFactoryBean.setLoginUrl("/toLogin");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filerMap);
-
         return shiroFilterFactoryBean;
     }
 
@@ -92,8 +100,8 @@ public class ShiroConfig{
 
 
 //    配置ShiroDialect，用于thymeleaf和shiro标签的使用
-    @Bean
-    public ShiroDialect getShiroDialect(){
-        return new ShiroDialect();
-    }
+//    @Bean
+//    public ShiroDialect getShiroDialect(){
+//        return new ShiroDialect();
+//    }
 }

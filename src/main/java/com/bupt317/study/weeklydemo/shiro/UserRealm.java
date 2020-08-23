@@ -33,6 +33,7 @@ public class UserRealm extends AuthorizingRealm {
         User user = (User)subject.getPrincipal();
         // 根据perms授权
         if (user.getPerms() != null)
+            // 如果是对应的授权，就给，不是或者没有就进不了
             info.addStringPermission(user.getPerms());
 
         return info;
@@ -47,7 +48,7 @@ public class UserRealm extends AuthorizingRealm {
         UsernamePasswordToken token = (UsernamePasswordToken)arg0;
 
         // 从数据库获得user
-        User dbUser = userService.findByName(token.getUsername());
+        User dbUser = userService.getByName(token.getUsername());
         if(null == dbUser){
             // 用户名不存在
             return null;  // UnknownAccountException

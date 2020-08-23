@@ -1,34 +1,18 @@
 package com.bupt317.study.weeklydemo.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 
-@Entity
-@Table(name = "user")
-@JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
 public class User {
 
-    /** id */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false, length = 10)
+    // 设置insert时候id的生成
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
-    /** name */
-    @Column(name = "name", nullable = true, length = 20)
     private String name;
-
-    /** password */
-    @Column(name = "password", nullable = true, length = 50)
     private String password;
-
-    /** perms */
-    @Column(name = "perms", nullable = true, length = 50)
     private String perms;
-
-    /** salt */
-    @Column(name = "salt", nullable = true, length = 50)
     private String salt;
 
     @Override
@@ -42,27 +26,11 @@ public class User {
                 '}';
     }
 
-    public String getPerms() {
-        return perms;
-    }
-
-    public void setPerms(String perms) {
-        this.perms = perms;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -80,5 +48,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPerms() {
+        return perms;
+    }
+
+    public void setPerms(String perms) {
+        this.perms = perms;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }
