@@ -12,11 +12,11 @@ public class AdminPageController {
      * 跳管理员页面
      * */
     @RequestMapping("/adminHome")
-    public String adminHome(){
-        // 测试一下能不能拿到当前user -- 可以
+    public String adminHome(Model model){
+        // 记得恢复，传过去用来加载用户头像
 //        Subject subject = SecurityUtils.getSubject();
 //        User user = (User)subject.getPrincipal();
-//        model.addAttribute("user", user);
+//        model.addAttribute("UserImgPath", "img/user/"+user.getId()+".jpg");
         return "admin/admin-index";
     }
 
@@ -29,12 +29,29 @@ public class AdminPageController {
     }
 
     /**
+     * 跳转至编辑用户页面
+     * 收到uid，传过去
+     */
+    @RequestMapping("/adminEditUser")
+    public String adminEditUser(
+            Model model,
+            @RequestParam(value = "uid") int uid
+    ){
+        model.addAttribute("uid", uid);
+        return "admin/userManaginfo";
+    }
+
+    /**
      * 跳转查看用户的项目页面
      * layui传参方法：/#/uid=
      * 会收到？uid,不用获取，直接跳转还在
      */
     @RequestMapping("/adminListUserProject")
-    public String adminListUserProject(){
+    public String adminListUserProject(
+            Model model,
+            @RequestParam(value = "uid") int uid
+    ){
+        model.addAttribute("uid",uid);
         return "admin/perspro";
     }
 
@@ -52,6 +69,18 @@ public class AdminPageController {
     @RequestMapping("/adminAddProject")
     public String adminAddProject(){
         return  "admin/addProject";
+    }
+
+    /**
+     * 跳转编辑项目界面
+     */
+    @RequestMapping("/adminEditProject")
+    public String adminEditProject(
+            Model model,
+            @RequestParam(value = "pid") int pid
+    ){
+        model.addAttribute("pid", pid);
+        return "admin/proManaginfo";
     }
 
     /*

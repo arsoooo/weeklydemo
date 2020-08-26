@@ -28,7 +28,7 @@
         <ul class="layui-nav layui-layout-right" >
             <li class="layui-nav-item" id="usericon" mytitle="管理员中心">
                 <a href="javascript:;">
-                    <img src="img/login/timg.jpg" class="layui-nav-img">
+                    <img src='' class="layui-nav-img" id="userImg">
                     管理员
                 </a>
             </li>
@@ -89,6 +89,16 @@
     </div>
 </div>
 <script>
+    // 加载用户照片
+    layui.use(['layer'], function () {
+        // let layer = layui.layer;
+        // 为什么$("#userImg")用不了,有待商榷
+        document.getElementById("userImg").src = '[[${UserImgPath}]]';
+        // layer.msg(UserImgPath);
+    })
+
+
+
     //添加事件执行
     layui.use('element', function(){
         var $ = layui.jquery

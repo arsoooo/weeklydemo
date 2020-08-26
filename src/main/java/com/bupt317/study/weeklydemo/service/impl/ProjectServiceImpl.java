@@ -6,7 +6,9 @@ import com.bupt317.study.weeklydemo.mapper.ProjectMapper;
 import com.bupt317.study.weeklydemo.pojo.Project;
 import com.bupt317.study.weeklydemo.service.ProjectService;
 import com.bupt317.study.weeklydemo.service.ProjectmemberService;
+import com.bupt317.study.weeklydemo.service.UserService;
 import com.bupt317.study.weeklydemo.util.DateUtil;
+import com.bupt317.study.weeklydemo.util.ProjectUtil;
 import com.bupt317.study.weeklydemo.vo.DataVO;
 import com.bupt317.study.weeklydemo.vo.ProjectVO;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +29,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectmemberService projectmemberService;
 
+    @Autowired
+    private UserService userService;
+
+    /**
+     * 查询全部项目
+     */
     @Override
     public DataVO findData() {
         QueryWrapper<Project> wrapper = new QueryWrapper<>();
@@ -43,7 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
         List<ProjectVO> projectVOList = new ArrayList<>();
         for (Project project : projectList) {
             // 添加到list里去
-            projectVOList.add(pro2proVO(project));
+            projectVOList.add(pro2proVO(project,true));
         }
         dataVO.setData(projectVOList);
         return dataVO;
@@ -54,40 +62,57 @@ public class ProjectServiceImpl implements ProjectService {
      */
     @Override
     public DataVO findDataByUid(int uid) {
-        // 根据uid 获得这个user的所有项目pid
-        List<Integer> pids = projectmemberService.findPidsByUid(uid);
+        // 根据uid 获得这个user的所有project实体类
+        List<Project> projectList = projectMapper.findProjectsByUid(uid);
         // 准备DataVO
         DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE);
-        dataVO.setCount(pids.size());
+        dataVO.setCount(projectList.size());
         // 准备dataVO.data
         List<ProjectVO> projectVOList = new ArrayList<>();
-        for (Integer pid : pids) {
-            Project project = projectMapper.selectById(pid);
-            // 添加到list里去
-            projectVOList.add(pro2proVO(project));
+        for (Project project : projectList) {
+            projectVOList.add(pro2proVO(project,true));
         }
         dataVO.setData(projectVOList);
         return dataVO;
     }
 
+    @Override
+    public Project getProjectByPid(int pid) {
+        return projectMapper.selectById(pid);
+    }
+
+    @Override
+    public ProjectVO getProjectVOByPid(int pid) {
+        Project project = projectMapper.selectById(pid);
+        ProjectVO projectVO = pro2proVO(project,false);
+        projectVO.setContent(project.getContent());
+        return projectVO;
+    }
+
+
     /**
      * pro -> proVO 方法
      * 根据project的值，赋给projectVO给前端展示
      */
-    private ProjectVO pro2proVO(Project project){
+    private ProjectVO pro2proVO(Project project, Boolean deadlineTimeSimpleOrNot){
         ProjectVO projectVO = new ProjectVO();
-        // 会copy： id title
+        // 会copy： id title content
         BeanUtils.copyProperties(project, projectVO);
-        // projectTime:xxxx-xx-xx开始已经XX天
+        projectVO.setContent(null); // 减少传输量，需要再加（填充content需要）
+        // projectTimeStr:xxxx-xx-xx开始已经XX天
         String createTime = DateFormat.getDateTimeInstance().format(project.getCreateTime());
         String days_between_date = DateUtil.days_between_date(project.getCreateTime(), new Date());
-        projectVO.setProjectTime(createTime + "开始，已进行" + days_between_date + "天");
-        // deadlineTime
-        projectVO.setDeadlineTime(DateUtil.date2str(project.getDeadline()));
+        projectVO.setProjectTimeStr(createTime + "开始，已进行" + days_between_date + "天");
+        // deadlineTimeStr(区分显示和赋值给表单)
+        if(deadlineTimeSimpleOrNot){
+            projectVO.setDeadlineTimeStr(DateUtil.date2strSimple(project.getDeadline()));
+        } else{ projectVO.setDeadlineTimeStr(DateUtil.date2str(project.getDeadline())); }
+        // finishTimeStr
+        projectVO.setFinishTimeStr(DateUtil.date2strSimple(project.getFinishTime()));
         // projectState
-        projectVO.setProjectState(project.status2desc());
+        projectVO.setProjectState(ProjectUtil.status2desc(project.getStatus()));
         // names
-        projectVO.setNames(projectmemberService.findMemberNamesByPid(project.getId()));
+        projectVO.setNames(userService.findUserNamesByPid(project.getId()));
 
         return projectVO;
     }
@@ -101,5 +126,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public int addProject(Project project) {
         return projectMapper.insert(project);
+    }
+
+    @Override
+    public int updateProject(Project project) {
+        return projectMapper.updateById(project);
     }
 }

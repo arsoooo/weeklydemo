@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="js/jquery/2.0.0/jquery.min.js"></script>
     <script src="layui/layui.js"></script>
 </head>
 <body>
@@ -17,25 +18,32 @@
 </script>
 <script>
     layui.use(['layer', 'table'], function () {
-        // 获得url参数的笨方法！需要改进
-        var searchURL = window.location.search;
-        searchURL = searchURL.substring(1, searchURL.length);
-        var uid = searchURL.split("&")[0].split("=")[1];
-        // layer.alert(uid);
-
         let layer = layui.layer,
             table = layui.table;
 
+        /**
+         * 方法1：获得url参数的笨方法！需要改进
+         */
+        // var searchURL = window.location.search;
+        // searchURL = searchURL.substring(1, searchURL.length);
+        // var uid = searchURL.split("&")[0].split("=")[1];
+        /**
+         * 方法2：从后端model设置好过来直接获得
+         */
+        var uid = '[[${uid}]]';
+        // layer.alert(uid);
+
         table.render({
             elem: "#tableData",
-            url: "projects/" + uid,
+            url: "projects/users/" + uid,
             method: "get",
             cols: [
                 [
                     {field: 'id', title: 'ID', width: "6%", sort: true},
-                    {field: 'title', title: '项目名字', width: "20%"},
-                    {field: 'projectTime', title: '项目用时', width: "22%"},
-                    {field: 'deadlineTime', title: '计划结束日期', width: "15%"},
+                    {field: 'title', title: '项目名字', width: "15%"},
+                    {field: 'projectTimeStr', title: '项目用时', width: "22%"},
+                    {field: 'deadlineTimeStr', title: '计划结束日期', width: "10%"},
+                    {field: 'finishTimeStr', title: '结束日期', width: "10%"},
                     {field: 'projectState', title: '状态', width: "8%"},
                     {field: 'names', title: '成员', width: "14%"},
                     {fixed: 'right', title: '操作', width: "15%", align: 'center', toolbar: '#toolbar'}
@@ -47,17 +55,12 @@
 
             console.log(obj)
             let event = obj.event;
+            var data = obj.data;  // 获取选中行的信息
             if (event === "see") {
-                layer.open({
-                    type: 2,
-                    area: ['500px', '600px'],
-                    fix: false, //不固定
-                    maxmin: true,
-                    shadeClose: true,
-                    shade: 0.4,
-                    title: "个人项目查看详情",
-                    content: "./proManagInfo.html"
-                });
+                // 跳转至编辑项目
+                var url = "adminEditProject?pid=" + data.id;
+                location.href = url;
+
             } else if (event === "delete") {
                 layer.confirm('是否要删除？', {
                     btn: ['确定', '取消'] //按钮

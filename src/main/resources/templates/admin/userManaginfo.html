@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="js/jquery/2.0.0/jquery.min.js"></script>
+    <script src="layui/layui.js"></script>
+</head>
+<body>
+
+<!--</form>-->
+<form class="layui-form" action="" lay-filter="example">
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-block">
+            <input type="text" name="email" lay-verify="email" autocomplete="off" placeholder="请输入邮箱"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">手机号</label>
+        <div class="layui-input-block">
+            <!--手机verify记得改phone-->
+            <input type="text" name="phone" lay-verify="required" autocomplete="off" placeholder="请输入手机号"
+                   class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">其他信息</label>
+        <div class="layui-input-block">
+            <textarea name="other" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <!--权限单选框-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户权限</label>
+        <div class="layui-input-block">
+            <input type="radio" name="perm" value="普通用户" title="普通用户">
+            <input type="radio" name="perm" value="管理员" title="管理员">
+        </div>
+    </div>
+
+    <div class="layui-form-item">-->
+        <div class="layui-inline" style="width: 310px">
+            <label class="layui-form-label">信息表下载</label>
+            <!--void(0)是死链接的意思-->
+            <a href="javascript:void(0);" onclick="downloadFile()">
+                <button type="button" class="layui-btn" >下载</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    // 获得后端传来的uid
+    var uid = '[[${uid}]]';
+    // layer.alert(uid)
+
+    // 信息表下载地址（点击下载会跳转到这个函数,改变href）
+    function downloadFile() {
+        window.location = "doc/user/" + uid + ".doc";
+    }
+
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+        var layer = layui.layer;
+
+        // ajax异步请求res
+        $.ajax({
+            url: 'users/'+uid,
+            type: 'get',
+            success: function (res) {
+                console.log(res)
+                if (res.code == 0) {
+                    // 收到json后给表单赋值
+                    form.val("example", { //example 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                        "name": res.data.name // "name": "value"
+                        ,"email": res.data.email
+                        ,"phone": res.data.phone
+                        ,"other": res.data.other
+                        ,"perm": res.data.permStr
+                    });
+                }
+            }
+        })
+
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            // layer.msg(JSON.stringify(data.field));
+
+            var data = form.val('example');
+            // layer.alert(JSON.stringify(data));
+            // 异步提交
+            $.ajax({
+                url: 'users/'+uid, // 这里加上uid是为了获得dbUser
+                type: 'put',
+                dataType: 'json',
+                data: data,
+                beforeSend: function () {
+                    //弹出的lodinng层
+                    layer.load(2, {
+                        shade: [0.5, "#333"]
+                    });
+                },
+                success: function (res) {
+                    if (res.code == 0) {
+                        //res.code == 0,表示用户输入成功，1表示失败
+                        //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
+                        layer.msg("修改完成", {icon: 1})
+                        setTimeout(function () {
+                            //如果输入成功，可以跳到另一个你需要的界面
+                            location.href = "adminListUser";
+                        }, 1000)
+                    } else {
+                        //不等于0时填出的内容
+                        layer.msg(res.msg)
+                    }
+                },
+                error: function () {
+                    //用户输入与接口内容不对应，显示文字
+                    layer.msg("网络繁忙，访问失败")
+                },
+                complete: function () {
+                    //关掉loading
+                    layer.closeAll("loading")
+                }
+            })
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

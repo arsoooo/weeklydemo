@@ -32,25 +32,6 @@ public class Project {
         this.content = content;
     }
 
-
-    /**
-     * 根据status返回中文，用于显示
-     */
-    public String status2desc(){
-        String desc;
-        switch(status){
-            case StaticParams.PRJ_CREATED:
-                desc="进行中";
-                break;
-            case StaticParams.PRJ_FINISHED:
-                desc="已结项";
-                break;
-            default:
-                desc="未知";
-        }
-        return desc;
-    }
-
     @Override
     public String toString() {
         return "Project{" +

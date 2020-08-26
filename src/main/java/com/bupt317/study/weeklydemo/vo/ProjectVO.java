@@ -3,10 +3,12 @@ package com.bupt317.study.weeklydemo.vo;
 public class ProjectVO {
     private Integer id;
     private String title;
-    private String projectTime;
-    private String deadlineTime;
+    private String projectTimeStr; // 开始时间+描述
+    private String deadlineTimeStr;
+    private String finishTimeStr;
     private String projectState;
     private String names;
+    private String content;
 
     public Integer getId() {
         return id;
@@ -24,20 +26,28 @@ public class ProjectVO {
         this.title = title;
     }
 
-    public String getProjectTime() {
-        return projectTime;
+    public String getProjectTimeStr() {
+        return projectTimeStr;
     }
 
-    public void setProjectTime(String projectTime) {
-        this.projectTime = projectTime;
+    public void setProjectTimeStr(String projectTimeStr) {
+        this.projectTimeStr = projectTimeStr;
     }
 
-    public String getDeadlineTime() {
-        return deadlineTime;
+    public String getDeadlineTimeStr() {
+        return deadlineTimeStr;
     }
 
-    public void setDeadlineTime(String deadlineTime) {
-        this.deadlineTime = deadlineTime;
+    public void setDeadlineTimeStr(String deadlineTimeStr) {
+        this.deadlineTimeStr = deadlineTimeStr;
+    }
+
+    public String getFinishTimeStr() {
+        return finishTimeStr;
+    }
+
+    public void setFinishTimeStr(String finishTimeStr) {
+        this.finishTimeStr = finishTimeStr;
     }
 
     public String getProjectState() {
@@ -54,5 +64,13 @@ public class ProjectVO {
 
     public void setNames(String names) {
         this.names = names;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

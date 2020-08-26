@@ -14,7 +14,7 @@ public class JsonUtil {
      * @param jsonStr
      * @return List<UserVO>
      */
-    public static List<UserVO> jsonStr2Users(String jsonStr){
+    public static List<UserVO> jsonStr2UserVOs(String jsonStr){
         List<UserVO> userVOList = JSON.parseArray(jsonStr, UserVO.class);
         return userVOList;
     }

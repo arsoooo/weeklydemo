@@ -14,6 +14,9 @@ public class User {
     private String password;
     private String perms;
     private String salt;
+    private String email;
+    private String phone;
+    private String other;
 
     @Override
     public String toString() {
@@ -23,6 +26,9 @@ public class User {
                 ", password='" + password + '\'' +
                 ", perms='" + perms + '\'' +
                 ", salt='" + salt + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", other='" + other + '\'' +
                 '}';
     }
 
@@ -64,5 +70,29 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getOther() {
+        return other;
+    }
+
+    public void setOther(String other) {
+        this.other = other;
     }
 }

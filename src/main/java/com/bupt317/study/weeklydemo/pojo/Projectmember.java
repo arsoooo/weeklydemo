@@ -13,16 +13,15 @@ public class Projectmember {
 
     private Integer pid;
     private Integer uid;
-    private String uname;
+
 
 
     public Projectmember() {
     }
 
-    public Projectmember(Integer pid, Integer uid, String uname) {
+    public Projectmember(Integer pid, Integer uid) {
         this.pid = pid;
         this.uid = uid;
-        this.uname = uname;
     }
 
     @Override
@@ -31,7 +30,6 @@ public class Projectmember {
                 "id=" + id +
                 ", pid=" + pid +
                 ", uid=" + uid +
-                ", uname='" + uname + '\'' +
                 '}';
     }
 
@@ -57,13 +55,5 @@ public class Projectmember {
 
     public void setUid(Integer uid) {
         this.uid = uid;
-    }
-
-    public String getUname() {
-        return uname;
-    }
-
-    public void setUname(String uname) {
-        this.uname = uname;
     }
 }

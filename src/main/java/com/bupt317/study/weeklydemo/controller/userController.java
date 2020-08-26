@@ -1,6 +1,11 @@
 package com.bupt317.study.weeklydemo.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+import com.bupt317.study.weeklydemo.pojo.User;
 import com.bupt317.study.weeklydemo.service.UserService;
+import com.bupt317.study.weeklydemo.util.UserUtil;
+import com.bupt317.study.weeklydemo.util.WordUtil;
 import com.bupt317.study.weeklydemo.vo.DataVO;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -34,8 +39,8 @@ public class userController {
         try {
             // 3.执行登录方法subject.login(token) -> 执行认证逻辑
             subject.login(token);
-            // 正确跳转test控制器
-            return DataVO.success();
+            // 正确跳转test控制器,把对象取到，id传过去
+            return DataVO.success(((User)subject.getPrincipal()).getId());
         }catch(UnknownAccountException e){
 //            model.addAttribute("msg", "用户名不存在！");
             // 直接跳html，有m要传
@@ -57,5 +62,52 @@ public class userController {
         return userService.findData();
     }
 
+    /**
+     * 根据ID查询某个用户的User -> DataVO.data
+     */
+    @GetMapping("/users/{uid}")
+    public DataVO getUserById(@PathVariable("uid") int uid){
+        return DataVO.success(userService.getUserVOById(uid));
+    }
 
+    /**
+     * admin编辑用户提交后 更新用户信息
+     */
+    @PutMapping("/users/{uid}")
+    public DataVO updateUserByAdmin(
+            User user,
+            @PathVariable("uid") int uid,
+            @RequestParam("perm") String perm
+    ){
+        // 分配权限
+        user.setPerms(UserUtil.desc2Perm(perm));
+        // dbUser是原始的user,然后把新user的内容copy一份给他<使用hutool的util>
+        User dbUser = userService.getById(uid);
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // 更新用户信息
+        userService.updateUser(dbUser);
+        // 更新信息表
+        WordUtil.writeDoc(dbUser);
+        return DataVO.success();
+    }
+
+    /**
+     * 获取某个项目没有参加的用户
+     * 目的是生成可以增加的用户表
+     */
+    @GetMapping("/users/products/add/{pid}")
+    public DataVO findOtherUsersByPid(@PathVariable("pid") int pid){
+        return DataVO.success(userService.findOtherUsersByPid(pid));
+    }
+
+
+    /**
+     * 获取某个项目已经参加的用户
+     * 目的是生成可以删除的用户表
+     */
+    @GetMapping("/users/products/del/{pid}")
+    public DataVO findUsersByPid(@PathVariable("pid") int pid){
+        return DataVO.success(userService.findUsersByPid(pid));
+    }
 }

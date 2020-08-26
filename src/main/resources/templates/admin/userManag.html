@@ -18,64 +18,64 @@
     <div class="layui-btn layui-btn-sm" lay-event="seepubli">查看</div>
 </script>
 <script type="text/html" id="toolbar">
-    <div class="layui-btn layui-btn-sm" lay-event="see">查看</div>
+    <div class="layui-btn layui-btn-sm" lay-event="see">编辑</div>
+
+    <div class="layui-btn layui-btn-sm" lay-event="downloadFile"
+         href="javascript:void(0);">下载信息表</div>
+
     <div class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</div>
 </script>
 
 <script>
-    layui.use(['layer','table'],function () {
-        let  layer = layui.layer,
+    layui.use(['layer', 'table'], function () {
+        let layer = layui.layer,
             table = layui.table;
 
         table.render({
-            elem:"#tableData",
-            url:"users",
-            method:"get",
-            cols:[
+            elem: "#tableData",
+            url: "users",
+            method: "get",
+            cols: [
                 [
-                    {field: 'id', title: 'ID', width:"10%", sort: true},
-                    {field: 'name', title: '用户名', width: "15%"},
-                    {field: 'projectName', title: '项目', width: "25%", align: 'center', toolbar: '#protoolbar'},
-                    {field: 'publiName', title: '周报', width: "25%", align: 'center', toolbar: '#publitoolbar'},
-                    {fixed: 'right', title: '操作', width: "25%", align: 'center', toolbar: '#toolbar'}
-            ]
+                    {field: 'id', title: 'ID', width: "10%", sort: true},
+                    {field: 'name', title: '用户名', width: "10%"},
+                    {field: 'permStr', title: '权限', width: "10%"},
+                    {field: 'projectName', title: '项目', width: "15%", align: 'center', toolbar: '#protoolbar'},
+                    {field: 'publiName', title: '周报', width: "15%", align: 'center', toolbar: '#publitoolbar'},
+                    {fixed: 'right', title: '操作', width: "40%", align: 'center', toolbar: '#toolbar'}
+                ]
             ]
         })
 
-        table.on("tool(tableData)",function (obj) {
+        table.on("tool(tableData)", function (obj) {
             // var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
             console.log(obj)
             let event = obj.event;
             var data = obj.data;  // 获取选中行的信息
-            if(event === "see"){
-                var url = "adminEditUser/" + data.id+ "/" +data.userName;
-                // layer.alert('编辑行：<br>'+ data.id + data.name);
+            if (event === "see") {
+                // 跳转至编辑个人信息
+                var url = "adminEditUser?uid=" + data.id;
+                location.href = url;
 
-                // location.href = "adminEditUser/" + id;
-                // layer.open({
-                //     type: 2,
-                //     area: ['500px','600px'],
-                //     fix: false, //不固定
-                //     maxmin: true,
-                //     shadeClose: true,
-                //     shade: 0.4,
-                //     title: "人员查看详情",
-                //     content: "admin/userManagInfo.html"
-                // });
-            }else if (event === "delete"){
+            } else if (event === "downloadFile") {
+                // 下载信息表
+                window.location = "doc/user/" + data.id + ".doc";
+
+            } else if (event === "delete") {
                 layer.confirm('是否要删除？', {
-                    btn: ['确定','取消'] //按钮
-                }, function(){
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
                     layer.msg("删除成功");
                 });
-            }else if(event === "seepro"){
-                // 跳转至查看个人项目
+            } else if (event === "seepro") {
+                // 跳转至查看个人所有项目
                 var url = "adminListUserProject?uid=" + data.id;
                 location.href = url;
-            }else if(event === "seepubli"){
+
+            } else if (event === "seepubli") {
                 layer.open({
                     type: 2,
-                    area: ['500px','600px'],
+                    area: ['500px', '600px'],
                     fix: false, //不固定
                     maxmin: true,
                     shadeClose: true,

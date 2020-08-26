@@ -19,6 +19,7 @@ public class StaticParams {
      * perms权限
      * 管理员："perms[admin:manager]"
      */
-    public static final String ADMIN_PERMS = "perms[admin:manager]";
+    public static final String ADMIN_PERMS = "admin:manager";
+    public static final String USER_PERMS = "user:visitor";
 
 }

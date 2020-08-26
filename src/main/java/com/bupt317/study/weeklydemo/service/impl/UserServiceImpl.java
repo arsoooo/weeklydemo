@@ -1,10 +1,14 @@
 package com.bupt317.study.weeklydemo.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.mapper.UserMapper;
+import com.bupt317.study.weeklydemo.pojo.Projectmember;
 import com.bupt317.study.weeklydemo.pojo.User;
 import com.bupt317.study.weeklydemo.service.UserService;
+import com.bupt317.study.weeklydemo.util.UserUtil;
 import com.bupt317.study.weeklydemo.vo.DataVO;
 import com.bupt317.study.weeklydemo.vo.UserVO;
 import org.springframework.beans.BeanUtils;
@@ -30,14 +34,59 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(int id) {
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("id", id);
-        return userMapper.selectOne(wrapper);
+        return userMapper.selectById(id);
     }
+
+    @Override
+    public UserVO getUserVOById(int id) {
+        // 后加：return userVO并且加入权限显示
+        User user = userMapper.selectById(id);
+        UserVO userVO = new UserVO(UserUtil.perm2Desc(user.getPerms()));
+        BeanUtil.copyProperties(user, userVO,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        System.out.println("这是一个UVO："+userVO.getId()+userVO.getPermStr());
+        return userVO;
+    }
+
+    @Override
+    public Integer updateUser(User user) {
+        return userMapper.updateById(user);
+    }
+
+
 
     @Override
     public boolean isNameExist(String name) {
         return null != getByName(name);
+    }
+
+    @Override
+    public String findUserNamesByPid(int pid) {
+        List<User> userList = userMapper.findUsersByPid(pid);
+        // 按格式把名字列出来
+        StringBuilder names = new StringBuilder();
+        for (User user : userList) {
+            names.append(user.getName()).append(" ");
+        }
+        return names.toString();
+    }
+
+    @Override
+    public List<UserVO> findUsersByPid(int pid) {
+        List<UserVO> userVOList =  new ArrayList<>();
+        for (User user : userMapper.findUsersByPid(pid)) {
+            userVOList.add(new UserVO(user.getId(), user.getName()));
+        }
+        return userVOList;
+    }
+
+    @Override
+    public List<UserVO> findOtherUsersByPid(int pid) {
+        List<UserVO> userVOList =  new ArrayList<>();
+        for (User user : userMapper.findOtherUsersByPid(pid)) {
+            userVOList.add(new UserVO(user.getId(), user.getName()));
+        }
+        return userVOList;
     }
 
     @Override
@@ -51,6 +100,8 @@ public class UserServiceImpl implements UserService {
             // 使用util工具直接复制属性
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(user, userVO);
+            // 后加：显示用户权限
+            userVO.setPermStr(UserUtil.perm2Desc(user.getPerms()));
             userVOList.add(userVO);
         }
         dataVO.setData(userVOList);

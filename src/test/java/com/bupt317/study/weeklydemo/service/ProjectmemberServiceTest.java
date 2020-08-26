@@ -14,8 +14,4 @@ class ProjectmemberServiceTest {
     @Autowired
     private ProjectmemberService projectmemberService;
 
-    @Test
-    void findMemberByPid() {
-        System.out.println(projectmemberService.findMemberNamesByPid(14));
-    }
 }

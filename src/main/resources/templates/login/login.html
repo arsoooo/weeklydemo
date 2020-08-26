@@ -84,7 +84,7 @@
         form.on('submit(login)', function (formData) {
             if (formData.field.role === "teacher") {
                 $.ajax({
-                    url: '/login',
+                    url: 'login',
                     type: 'post',
                     dataType: 'json',
                     data: {
