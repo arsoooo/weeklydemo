@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.bupt317.study.weeklydemo.pojo.User;
 import com.bupt317.study.weeklydemo.service.UserService;
+import com.bupt317.study.weeklydemo.util.ImgUtil;
 import com.bupt317.study.weeklydemo.util.UserUtil;
 import com.bupt317.study.weeklydemo.util.WordUtil;
 import com.bupt317.study.weeklydemo.vo.DataVO;
@@ -14,12 +15,17 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class userController {
 
     @Autowired
     private UserService userService;
+
+    //////////////////////// 管理员界面 ////////////////////////
 
     /**
      * 对输入的账户密码登录验证
@@ -77,7 +83,8 @@ public class userController {
     public DataVO updateUserByAdmin(
             User user,
             @PathVariable("uid") int uid,
-            @RequestParam("perm") String perm
+            @RequestParam("perm") String perm,
+            HttpServletRequest request
     ){
         // 分配权限
         user.setPerms(UserUtil.desc2Perm(perm));
@@ -88,7 +95,7 @@ public class userController {
         // 更新用户信息
         userService.updateUser(dbUser);
         // 更新信息表
-        WordUtil.writeDoc(dbUser);
+        WordUtil.writeUserDoc(dbUser, request);
         return DataVO.success();
     }
 
@@ -101,7 +108,6 @@ public class userController {
         return DataVO.success(userService.findOtherUsersByPid(pid));
     }
 
-
     /**
      * 获取某个项目已经参加的用户
      * 目的是生成可以删除的用户表
@@ -110,4 +116,21 @@ public class userController {
     public DataVO findUsersByPid(@PathVariable("pid") int pid){
         return DataVO.success(userService.findUsersByPid(pid));
     }
+
+    //////////////////////// 用户界面 ////////////////////////
+
+    /**
+     * 修改头像
+     * 没搞懂为啥要强调file才收得到MultipartFile
+     */
+    @PostMapping("/images")
+    public DataVO uploadUserImg(@RequestParam("file") MultipartFile image, HttpServletRequest request){
+
+        if(image==null){ return DataVO.fail("请选择一张图片"); }
+        User user = UserUtil.getLoginUser();
+        ImgUtil.saveUserImg(user, image, request);
+        return DataVO.success();
+    }
+
+
 }

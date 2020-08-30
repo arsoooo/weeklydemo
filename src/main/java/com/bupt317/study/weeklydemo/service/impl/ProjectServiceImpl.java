@@ -1,5 +1,6 @@
 package com.bupt317.study.weeklydemo.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.mapper.ProjectMapper;
@@ -25,9 +26,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectMapper projectMapper;
-
-    @Autowired
-    private ProjectmemberService projectmemberService;
 
     @Autowired
     private UserService userService;
@@ -97,10 +95,9 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectVO pro2proVO(Project project, Boolean deadlineTimeSimpleOrNot){
         ProjectVO projectVO = new ProjectVO();
         // 会copy： id title content
-        BeanUtils.copyProperties(project, projectVO);
-        projectVO.setContent(null); // 减少传输量，需要再加（填充content需要）
+        BeanUtil.copyProperties(project, projectVO, "content"); // 减少传输量，需要再加（修改时填充content才需要）
         // projectTimeStr:xxxx-xx-xx开始已经XX天
-        String createTime = DateFormat.getDateTimeInstance().format(project.getCreateTime());
+        String createTime = DateUtil.date2str(project.getCreateTime());
         String days_between_date = DateUtil.days_between_date(project.getCreateTime(), new Date());
         projectVO.setProjectTimeStr(createTime + "开始，已进行" + days_between_date + "天");
         // deadlineTimeStr(区分显示和赋值给表单)

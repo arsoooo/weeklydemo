@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="js/jquery/2.0.0/jquery.min.js"></script>
+    <script src="layui/layui.js"></script>
+</head>
+<body>
+
+<div id="tableData" lay-filter="tableData"></div>
+
+
+<script type="text/html" id="toolbar">
+    <div class="layui-btn layui-btn-sm" lay-event="see">点评</div>
+    <div class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</div>
+</script>
+<script>
+    // 获得后端传来的rid
+    var uid = '[[${uid}]]';
+
+    layui.use(['layer','table'],function () {
+        let  layer = layui.layer,
+            table = layui.table;
+
+        table.render({
+            elem:"#tableData",
+            url:"reports/users/" + uid,
+            method:"get",
+            cols:[
+                [
+                    {field: 'id', title: 'ID', width:"6%", sort: true},
+                    {field: 'title', title: '周报标题', width:"20%"},
+                    {field: 'userName', title: '上传者', width:"10%"},
+                    {field: 'createTimeStr', title: '提交时间', width:"20%", sort: true},
+                    {field: 'finishTimeStr', title: '点评时间', width:"20%", sort: true},
+                    {field: 'statusStr', title: '状态', width:"10%"},
+                    {fixed: 'right',title: '操作', width: "14%", align:'center', toolbar: '#toolbar'}
+                ]
+            ]
+        })
+
+        table.on("tool(tableData)",function (obj) {
+
+            console.log(obj)
+            let event = obj.event;
+            var data = obj.data;  // 获取选中行的信息
+            if(event === "see"){
+                // 跳转至编辑周报
+                var url = "adminEditReport?rid=" + data.id;
+                location.href = url;
+
+            }else if (event === "delete"){
+                layer.confirm('是否要删除？', {
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    layer.msg("删除成功");
+                });
+            }
+        })
+    })
+</script>
+</body>
+</html>

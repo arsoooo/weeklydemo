@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="css/usercenter.css">
+    <script src="js/jquery/2.0.0/jquery.min.js"></script>
+    <script src="layer/layer.js"></script>
+    <script src="layui/layui.js" charset="utf-8"></script>
+</head>
+<body>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>用户信息</legend>
+</fieldset>
+<div style="padding: 20px; background-color: #f2f2f2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card" style=" height: 160px;">
+                <div class="user">
+                    <img src='' class="layui-nav-img" id="icon">
+                </div>
+                <div id="name">
+                    <strong id="userName"></strong>
+                    <a href="studentEditUserImg" mytitle="更换头像" data-id="changeimg" class="changeimg">
+                        <img id="icon2" src="img/login/bianji.png">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md12">
+        <div class="layui-tab" id="table">
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-card">
+                        <div class="layui-card-body" id="info-itme1">
+                            <div class="username">
+                                密码:（不显示）
+                                <a href="">修改密码</a>
+                            </div>
+                            <div class="usertel">
+                                手机号：111111111
+                                <a href="">修改绑定手机号</a>
+                            </div>
+                            <div class="userem il">
+                                邮箱：xxxxx@xx.com
+                                <a href="">修改绑定邮箱</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 加载用户信息 + 照片
+    layui.use(['layer'], function () {
+        // let layer = layui.layer;
+        // 为什么$("#userImg")用不了,有待商榷
+        document.getElementById("icon").src = '[[${userImgPath}]]';
+        document.getElementById("userName").innerText = '[[${userName}]]';
+        // layer.msg(UserImgPath);
+    })
+
+    layui.use('element', function () {
+        var $ = layui.jquery
+            , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    });
+</script>
+
+</body>
+</html>

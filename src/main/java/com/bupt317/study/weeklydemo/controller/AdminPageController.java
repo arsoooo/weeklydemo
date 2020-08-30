@@ -1,22 +1,29 @@
 package com.bupt317.study.weeklydemo.controller;
 
+import com.bupt317.study.weeklydemo.pojo.User;
+import com.bupt317.study.weeklydemo.util.UserUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class AdminPageController {
 
     /**
      * 跳管理员页面
+     * 同时会把用户信息传过去，加载用户头像
      * */
     @RequestMapping("/adminHome")
-    public String adminHome(Model model){
+    public String adminHome(Model model, HttpServletRequest request){
         // 记得恢复，传过去用来加载用户头像
-//        Subject subject = SecurityUtils.getSubject();
-//        User user = (User)subject.getPrincipal();
-//        model.addAttribute("UserImgPath", "img/user/"+user.getId()+".jpg");
+//        User user = UserUtil.getLoginUser();
+//        model.addAttribute("userImgPath", UserUtil.getUserImgPath(user, request));
+//        model.addAttribute("userName",user.getName());
         return "admin/admin-index";
     }
 
@@ -83,21 +90,65 @@ public class AdminPageController {
         return "admin/proManaginfo";
     }
 
-    /*
-     * 跳增加用户页面
-     * */
-    @RequestMapping("/add")
-    public String add(){
-        return "student/add";
+    /**
+     * 跳转管理所有周报页面
+     */
+    @RequestMapping("/adminListReport")
+    public String adminListReport(){
+        return "admin/publiManag";
     }
 
-    /*
-     * 跳修改用户页面
-     * */
-    @RequestMapping("/update")
-    public String update(){
-        return "student/update";
+    /**
+     * 跳转编辑周报页面
+     * 收到rid，传过去
+     */
+    @RequestMapping("/adminEditReport")
+    public String adminEditReport(
+            Model model,
+            @RequestParam(value = "rid") int rid
+    ){
+        model.addAttribute("rid", rid);
+        return "admin/publiManaginfo";
     }
 
 
+    /**
+     * 跳转查看用户的周报页面
+     */
+    @RequestMapping("/adminListUserReport")
+    public String adminListUserReport(
+        Model model,
+        @RequestParam(value = "uid") int uid
+    ){
+        model.addAttribute("uid", uid);
+        return "admin/perspubli";
+    }
+
+    /**
+     * 跳转管理公告页面
+     */
+    @RequestMapping("/adminListNotice")
+    public String adminListNotice(){
+        return "admin/noticeManag";
+    }
+
+    /**
+     * 跳转新增公告页面
+     */
+    @RequestMapping("/adminAddNotice")
+    public String adminAddNotice(){
+        return "admin/addNotice";
+    }
+
+    /**
+     * 弹窗查看公告详情
+     */
+    @RequestMapping("/adminShowNotice")
+    public String adminShowNotice(
+        Model model,
+        @RequestParam(value = "nid") int nid
+    ){
+        model.addAttribute("nid", nid);
+        return "admin/noticeManaginfo";
+    }
 }

@@ -26,6 +26,18 @@ public class UserVO {
         this.permStr = permStr;
     }
 
+    @Override
+    public String toString() {
+        return "UserVO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", permStr='" + permStr + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", other='" + other + '\'' +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }

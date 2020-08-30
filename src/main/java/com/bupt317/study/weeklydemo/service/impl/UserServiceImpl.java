@@ -26,6 +26,11 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
+    public Integer getCount() {
+        return userMapper.selectCount(null);
+    }
+
+    @Override
     public User getByName(String name) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("name", name);
@@ -38,13 +43,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String getUserNameById(int id) {
+        return userMapper.getUserNameById(id);
+    }
+
+    @Override
     public UserVO getUserVOById(int id) {
         // 后加：return userVO并且加入权限显示
         User user = userMapper.selectById(id);
         UserVO userVO = new UserVO(UserUtil.perm2Desc(user.getPerms()));
         BeanUtil.copyProperties(user, userVO,
                 true, CopyOptions.create().setIgnoreNullValue(true));
-        System.out.println("这是一个UVO："+userVO.getId()+userVO.getPermStr());
         return userVO;
     }
 
@@ -69,6 +78,33 @@ public class UserServiceImpl implements UserService {
             names.append(user.getName()).append(" ");
         }
         return names.toString();
+    }
+
+    @Override
+    public String findUserNamesByNoticeStatusAndNid(int nid, String status) {
+        List<String> stringList = userMapper.fineUserNamesByNoticeStatusAndNid(nid, status);
+        // 按格式把名字列出来
+        StringBuilder names = new StringBuilder();
+        for (String s : stringList) {
+            names.append(s).append(" ");
+        }
+        return names.toString();
+    }
+
+    @Override
+    public String findUserNamesByNid(int nid) {
+        List<String> stringList = userMapper.fineUserNamesByNid(nid);
+        // 按格式把名字列出来
+        StringBuilder names = new StringBuilder();
+        for (String s : stringList) {
+            names.append(s).append(" ");
+        }
+        return names.toString();
+    }
+
+    @Override
+    public Integer getUserCountByNid(int nid) {
+        return userMapper.getUserCountByNid(nid);
     }
 
     @Override

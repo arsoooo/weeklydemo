@@ -1,5 +1,6 @@
 package com.bupt317.study.weeklydemo.mapper;
 
+import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.pojo.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,15 @@ class UserMapperTest {
         List<User> userList = userMapper.findOtherUsersByPid(13);
         for (User user : userList) {
             System.out.println(user.toString());
+        }
+    }
+
+    @Test
+    void fineUserNamesByNoticeStatus() {
+
+        List<String> stringList = userMapper.fineUserNamesByNoticeStatusAndNid(2, StaticParams.NOTICE_CREATED);
+        for (String s : stringList) {
+            System.out.println(s);
         }
     }
 }

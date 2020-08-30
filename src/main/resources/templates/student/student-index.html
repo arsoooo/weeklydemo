@@ -22,12 +22,13 @@
             <li class="layui-nav-item showtab layui-this" data-id="setting" mytitle="个人中心"><a>个人中心</a></li>
             <li class="layui-nav-item showtab" data-id="projects" mytitle="项目查看"><a>项目查看</a></li>
             <li class="layui-nav-item showtab" data-id="publications" mytitle="周报查看"><a>周报查看</a></li>
+            <li class="layui-nav-item showtab" data-id="notices" mytitle="公告栏"><a>公告栏</a></li>
         </ul>
         <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item" id="usericon" mytitle="个人中心" data-url="usercenter.html">
+            <li class="layui-nav-item" id="usericon" mytitle="个人信息" data-url="studentEditUser">
                 <a href="javascript:;">
-                    <img src="./recouse/static/timg.jpg" class="layui-nav-img">
-                    username
+                    <img src='' class="layui-nav-img" id="userImg">
+                    <strong id="userName"></strong>
                 </a>
             </li>
             <li class="layui-nav-item">
@@ -44,7 +45,7 @@
                 <li class="layui-nav-item layui-nav-itemed" id="setting" name="tabs">
                     <a href="javascript:;">个人中心</a>
                     <dl class="layui-nav-child">
-                        <dd class="leftdaohang " data-url="usercenter.html" mytitle="个人信息"><a>个人信息</a></dd>
+                        <dd class="leftdaohang " data-url="studentEditUser" mytitle="个人信息"><a>个人信息</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed" id="projects" name="tabs" style="display:none;">
@@ -58,6 +59,12 @@
                     <dl class="layui-nav-child">
                         <dd class="leftdaohang" data-url="stupublipro.html" mytitle="查看个人周报"><a>查看个人周报</a></dd>
                         <dd class="leftdaohang" data-url="upload.html" mytitle="上传周报"><a>上传周报</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item  layui-nav-itemed" id="notices" name="tabs" style="display:none;">
+                    <a href="javascript:;">公告栏</a>
+                    <dl class="layui-nav-child">
+                        <dd class="leftdaohang " data-url="adminListNotice" mytitle="查看公告"><a>查看公告</a></dd>
                     </dl>
                 </li>
             </ul>
@@ -79,6 +86,28 @@
     </div>
 </div>
 <script>
+    // 加载用户名称 + 照片
+    layui.use(['layer'], function () {
+        // let layer = layui.layer;
+        // 为什么$("#userImg")用不了,有待商榷
+        document.getElementById("userImg").src = '[[${userImgPath}]]';
+        document.getElementById("userName").innerText = '[[${userName}]]';
+        // layer.msg(UserImgPath);
+    })
+
+    // 判断是否有通知
+    $.ajax({
+        url: 'notices/home',
+        type: 'get',
+        success: function (res) {
+            if (res.code === 1) {
+                //这里失败表示，有通知，才会出现提示，存在msg里面
+                layer.alert(res.msg)
+            }
+            //这里success意味着没有新通知
+        }
+    })
+
     //添加事件执行
     layui.use(['jquery', 'element', 'upload'], function () {
         let $ = layui.jquery

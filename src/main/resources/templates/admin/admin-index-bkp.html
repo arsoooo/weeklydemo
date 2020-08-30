@@ -1,3 +1,4 @@
+<!---->
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,7 +30,7 @@
             <li class="layui-nav-item" id="usericon" mytitle="管理员中心">
                 <a href="javascript:;">
                     <img src='' class="layui-nav-img" id="userImg">
-                    <strong id="userName"></strong>
+                    管理员
                 </a>
             </li>
             <li class="layui-nav-item">
@@ -46,27 +47,26 @@
                 <li class="layui-nav-item layui-nav-itemed" id="staffs" name="tabs">
                     <a href="javascript:;">人员管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="adminListUser" target="body-frame">查看人员</a></dd>
+                        <dd class="leftdaohang " data-url="adminListUser" mytitle="查看人员"><a>查看人员</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed" id="projects" name="tabs" style="display:none;">
                     <a href="javascript:;">项目管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="adminListProject" target="body-frame">查看项目</a></dd>
-                        <dd><a href="adminAddProject" target="body-frame">增加项目</a></dd>
+                        <dd class="leftdaohang " data-url="adminListProject" mytitle="查看项目"><a>查看项目</a></dd>
+                        <dd class="leftdaohang " data-url="adminAddProject" mytitle="增加项目"><a>增加项目</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item  layui-nav-itemed" id="publications" name="tabs" style="display:none;">
                     <a href="javascript:;">周报管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="adminListReport" target="body-frame">查看周报</a></dd>
+                        <dd class="leftdaohang " data-url="adminListReport" mytitle="查看周报"><a>查看周报</a></dd>
                     </dl>
                 <li class="layui-nav-item  layui-nav-itemed" id="notices" name="tabs" style="display:none;">
                     <a href="javascript:;">公告栏</a>
                     <dl class="layui-nav-child">
-
-                        <dd><a href="adminListNotice" target="body-frame">查看公告</a></dd>
-                        <dd><a href="adminAddNotice" target="body-frame">新增公告</a></dd>
+                        <dd class="leftdaohang " data-url="adminListNotice" mytitle="查看公告"><a>查看公告</a></dd>
+                        <dd class="leftdaohang " data-url="adminAddNotice" mytitle="新增公告"><a>新增公告</a></dd>
                     </dl>
                 </li>
                 </li>
@@ -77,8 +77,6 @@
     <div class="layui-body" style="margin-bottom:-50px;">
         <!--tabs标签-->
         <div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true">
-            <iframe src="https://www.baidu.com/" name="body-frame" id="demoAdmin" style="width: 100%; height: 600px;" frameborder="0"></iframe>
-
             <ul class="layui-tab-title">
                 <!-- <li class="layui-this" lay-id=""><i class="layui-icon">&#xe68e;</i> <cite>后台首页</cite></li>-->
             </ul>
@@ -97,7 +95,6 @@
         // let layer = layui.layer;
         // 为什么$("#userImg")用不了,有待商榷
         document.getElementById("userImg").src = '[[${userImgPath}]]';
-        document.getElementById("userName").innerText = '管理员：' + '[[${userName}]]';
         // layer.msg(UserImgPath);
     })
 
@@ -113,7 +110,6 @@
             //这里success意味着没有新通知
         }
     })
-
 
     //添加事件执行
     layui.use('element', function(){

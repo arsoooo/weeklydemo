@@ -25,4 +25,26 @@ public interface UserMapper extends BaseMapper<User> {
             ")")
     public List<User> findOtherUsersByPid(int pid);
 
+
+    @Select("select u.name from user u where u.id = #{id}")
+    public String getUserNameById(int id);
+
+    @Select("select u.name from user u " +
+            "left join noticemember nm " +
+            "on u.id = nm.uid " +
+            "where nm.nid = #{nid} " +
+            "and nm.status = #{status}")
+    public List<String> fineUserNamesByNoticeStatusAndNid(int nid, String status);
+
+    @Select("select u.name from user u " +
+            "left join noticemember nm " +
+            "on u.id = nm.uid " +
+            "where nm.nid = #{nid} ")
+    public List<String> fineUserNamesByNid(int nid);
+
+    @Select("select count(*) from user u " +
+            "left join noticemember nm " +
+            "on u.id = nm.uid " +
+            "where nm.nid = #{nid} ")
+    public Integer getUserCountByNid(int nid);
 }

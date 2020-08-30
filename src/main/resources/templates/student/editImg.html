@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="css/usercenter.css">
+    <script src="js/jquery/2.0.0/jquery.min.js"></script>
+    <script src="layer/layer.js"></script>
+    <script src="layui/layui.js" charset="utf-8"></script>
+</head>
+<body>
+
+<div style="padding: 200px">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card" style=" height: 160px;">
+                <div class="user">
+                    <img id="icon" src="" style=""/>
+                </div>
+                <div class="layui-upload" style="padding-left: 500px;padding-top: 50px">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn" id="test1">上传图片</button>
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img" id="demo1">
+                            <p id="demoText"></p>
+                        </div>
+                        <button type="button" class="layui-btn" id="test9">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+<script>
+    //加载用户头像
+    document.getElementById("icon").src = '[[${userImgPath}]]';
+
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        upload.render({
+            elem: '#test1'
+            , url: 'images' //改成您自己的上传接口
+            , method: 'post'
+            , accept: 'images'  //图片（jpg|png|gif|bmp|jpeg）
+            // , acceptMime: 'image/jpg, image/png' //（只显示 jpg 和 png 文件）
+            , size: 1500  //限制文件大小，单位 KB
+            , auto: false
+            , bindAction: '#test9'  // 指向一个按钮触发上传
+            , drag: true  // 是否接受拖拽的文件上传
+            , choose: function (obj) {  //choose在选择文件之后，before在提交文件之前
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#demo1').attr('src', result); //图片链接（base64）
+                });
+            }
+            , done: function (res) {
+                if (res.code === 0) {
+                    layer.msg('成功！刷新后生效！');
+                    setTimeout(function () {
+                        //如果输入成功，可以跳到另一个你需要的界面
+                        location.href = "studentEditUser";
+                    }, 1000)
+                } else {
+                    layer.msg(res.msg);
+                }
+            }
+            /**
+             * 处理一下错误（上传gif这种）
+             */
+        });
+    });
+</script>
+</html>

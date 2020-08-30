@@ -73,16 +73,9 @@
                 location.href = url;
 
             } else if (event === "seepubli") {
-                layer.open({
-                    type: 2,
-                    area: ['500px', '600px'],
-                    fix: false, //不固定
-                    maxmin: true,
-                    shadeClose: true,
-                    shade: 0.4,
-                    title: "查看个人周报详情",
-                    content: "./perspubli.html"
-                });
+                // 跳转至查看个人所有周报
+                var url = "adminListUserReport?uid=" + data.id;
+                location.href = url;
             }
         })
     })

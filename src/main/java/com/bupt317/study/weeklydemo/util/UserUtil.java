@@ -1,6 +1,11 @@
 package com.bupt317.study.weeklydemo.util;
 
 import com.bupt317.study.weeklydemo.config.StaticParams;
+import com.bupt317.study.weeklydemo.pojo.User;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class UserUtil {
 
@@ -38,5 +43,27 @@ public class UserUtil {
                 desc="未知";
         }
         return desc;
+    }
+
+    /**
+     * User -> 用户头像照片地址
+     */
+    public static String getUserImgPath(User user, HttpServletRequest request){
+//        String path = PathUtil.getROOTPath(request, StaticParams.USER_IMG_ROOT)
+//                + user.getId()
+//                + ".jpg";
+        String path = StaticParams.USER_IMG_ROOT + user.getId() + ".jpg";
+        System.out.println("userUtil:" + path);
+        return path;
+    }
+
+    /**
+     * 由于用户界面经常用到
+     * 封装一个获取当前用户的方法
+     */
+    public static User getLoginUser(){
+        Subject subject = SecurityUtils.getSubject();
+        User user = (User)subject.getPrincipal();
+        return user;
     }
 }
