@@ -34,16 +34,14 @@ public class userController {
      * */
     @PostMapping("/login")
     public Object login(
-            @RequestParam(value = "name") String name,
-            @RequestParam(value = "password") String password
-//            @RequestBody User user,
-//            Model model
+            User user
     ){
-        System.out.println(name+password);
+        // 会从表单中获得name 和 password
+        System.out.println(user);
         // 1.SecurityUtils获得subject
         Subject subject = SecurityUtils.getSubject();
         // 2.UsernamePasswordToken存user进去
-        UsernamePasswordToken token = new UsernamePasswordToken(name, password);
+        UsernamePasswordToken token = new UsernamePasswordToken(user.getName(), user.getPassword());
         try {
             // 3.执行登录方法subject.login(token) -> 执行认证逻辑
             subject.login(token);

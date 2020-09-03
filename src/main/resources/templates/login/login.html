@@ -9,6 +9,7 @@
     <link rel="stylesheet" type=text/css href="layui/css/layui.css" media="all">
     <link rel="stylesheet" type=text/css href="css/login.css">
     <script src="js/jquery/2.0.0/jquery.min.js"></script>
+    <script src="js/cookie/1.4.1/jquery.cookie.js"></script>
     <script src="layer/layer.js"></script>
     <script src="layui/layui.js" charset="utf-8"></script>
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
@@ -16,15 +17,15 @@
 <body background="img/login/1.jpg">
 
 <div class="login bg-black ">
-    <form class="layui-form bg-blue" action="">
+    <form class="layui-form bg-blue" action="" lay-filter="example" id="example">
         <div class="layui-form-item margin-top-10">
             <label class="layui-form-label">用户名
                 <i class="layui-icon">&#xe66f;</i>
             </label>
             <div class="layui-input-inline">
                 <!-- //采用inline表示可以继续放 -->
-                <input type="text" name="username" required lay-verify="required|confirmName" placeholder="请输入用户名"
-                       autocomplete="off" class="layui-input" >
+                <input type="text" name="name" required lay-verify="required|confirmName" placeholder="请输入用户名"
+                       autocomplete="off" class="layui-input" id="name">
             </div>
             <!-- <div class="layui-form-mid layui-word-aux"></div> -->
         </div>
@@ -33,8 +34,8 @@
                 <i class="layui-icon"> &#xe672;</i>
             </label>
             <div class="layui-input-inline">
-                <input type="password" name="userpassword" required lay-verify="required|confirmPwd" placeholder="请输入密码"
-                       autocomplete="off" class="layui-input">
+                <input type="password" name="password" required lay-verify="required|confirmPwd" placeholder="请输入密码"
+                       autocomplete="off" class="layui-input" id="password">
             </div>
         </div>
 
@@ -47,7 +48,7 @@
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <input type="checkbox" name="" title="记住我" lay-skin="primary" checked>
+                <input type="checkbox" name="remember_user" id="remember_user" title="记住我" lay-skin="primary" checked>
             </div>
         </div>
         <div class="layui-form-item">
@@ -59,6 +60,7 @@
         </div>
     </form>
 </div>
+
 <script>
     /*注册按钮*/
     function toRegister(){
@@ -85,18 +87,49 @@
                 }
             }
         });
+
+        /*填入cookie中的账号密码*/
+        if ($.cookie("remember_user") === "true") {
+            // 表单数据赋值
+            form.val("example",{
+                "name":$.cookie("name"),
+                "password":$.cookie("password")
+            })
+            // 这个方法也可以
+            // document.getElementById("name").value = $.cookie("name");
+            // document.getElementById("password").value = $.cookie("password");
+        }
+
         //不想提交，可以监听，使用form.on
         form.on('submit(login)', function (formData) {
-            if (formData.field.role === "teacher") {
+            var data = form.val('example');  // 表单数据获取
+
+            // 判断选中记住用户名，存到cookie中
+            if (data.remember_user === "on") {
+                var name = data.name;
+                var password = data.password;
+                $.cookie("remember_user", "true", { expires: 7 }); // 这是为了判断之前有没有保存过
+                $.cookie("name", name, { expires: 7 }); // 存储一个带7天期限的 cookie
+                $.cookie("password", password, { expires: 7 }); // 存储一个带7天期限的 cookie
+            } else {
+                // $.cookie("remember_user", "false", { expires: 7 }); // 这是为了判断之前有没有保存过
+                $.cookie("remember_user", '', { expires: -1 }); // 这是为了判断之前有没有保存过
+                $.cookie("name", '', { expires: -1 });
+                $.cookie("password", '', { expires: -1 });
+            }
+
+            // 判断选的是老师还是学生登录
+            if (data.role === "teacher") {
                 $.ajax({
                     url: 'login',
                     type: 'post',
                     dataType: 'json',
-                    data: {
-                        //监听的内容有哪些,你的登陆界面上用户输入的有哪些，就监听那些
-                        name: $('input[name="username"]').val(),
-                        password: $('input[name="userpassword"]').val()
-                    },
+                    data: data,
+                    // data: {
+                        // //监听的内容有哪些,你的登陆界面上用户输入的有哪些，就监听那些
+                        // name: $('input[name="name"]').val(),
+                        // password: $('input[name="password"]').val()
+                    // },
                     beforeSend: function () {
                         //弹出的lodinng层
                         layer.load(2, {
@@ -104,7 +137,7 @@
                         });
                     },
                     success: function (res) {
-                        if (res.code == 0) {
+                        if (res.code === 0) {
                                 //res.code == 0,表示用户输入成功，1表示失败
                             //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
                             layer.msg("登陆成功", {icon: 1})
@@ -131,11 +164,7 @@
                     url: 'login',
                     type: 'post',
                     dataType: 'json',
-                    data: {
-                        //监听的内容有哪些,你的登陆界面上用户输入的有哪些，就监听那些
-                        name: $('input[name="username"]').val(),
-                        password: $('input[name="userpassword"]').val()
-                    },
+                    data: data, // 直接用表单数据
                     beforeSend: function () {
                         //弹出的lodinng层
                         layer.load(2, {
@@ -144,7 +173,7 @@
                     },
                     success: function (res) {
                         console.log(res)
-                        if (res.code == 0) {
+                        if (res.code === 0) {
                             //res.code == 0,表示用户输入成功，1表示失败
                             //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
                             layer.msg("登陆成功", {icon: 1})
