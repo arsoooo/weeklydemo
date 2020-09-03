@@ -12,12 +12,13 @@
 
 
 <script type="text/html" id="toolbar">
-    <div class="layui-btn layui-btn-sm" lay-event="see">编辑</div>
+    <div class="layui-btn layui-btn-sm" lay-event="see">查看</div>
     <div class="layui-btn layui-btn-sm" lay-event="downloadFile"
          href="javascript:void(0);">下载</div>
     <div class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</div>
 </script>
 <script>
+
     layui.use(['layer','table'],function () {
         let  layer = layui.layer,
             table = layui.table;
@@ -25,18 +26,18 @@
 
         table.render({
             elem:"#tableData",
-            url:"reports",
+            url:"reports/users",
             method:"get",
             cols:[
                 [
-                {field: 'id', title: 'ID', width:"6%", sort: true},
-                {field: 'title', title: '周报标题', width:"20%"},
-                {field: 'userName', title: '上传者', width:"10%"},
-                {field: 'createTimeStr', title: '提交时间', width:"18%", sort: true},
-                {field: 'finishTimeStr', title: '点评时间', width:"18%", sort: true},
-                {field: 'statusStr', title: '状态', width:"10%", sort: true},
-                {fixed: 'right',title: '操作', width: "18%", align:'center', toolbar: '#toolbar'}
-            ]
+                    {field: 'id', title: 'ID', width:"6%", sort: true},
+                    {field: 'title', title: '周报标题', width:"20%"},
+                    {field: 'userName', title: '上传者', width:"10%"},
+                    {field: 'createTimeStr', title: '提交时间', width:"18%", sort: true},
+                    {field: 'finishTimeStr', title: '点评时间', width:"18%", sort: true},
+                    {field: 'statusStr', title: '状态', width:"10%", sort: true},
+                    {fixed: 'right',title: '操作', width: "18%", align:'center', toolbar: '#toolbar'}
+                ]
             ]
         })
 
@@ -46,9 +47,18 @@
             let event = obj.event;
             var data = obj.data;  // 获取选中行的信息
             if(event === "see"){
-                // 跳转至编辑周报
-                var url = "adminEditReport?rid=" + data.id;
-                location.href = url;
+                // 弹出窗查看具体信息
+                var url = "studentShowReport?rid=" + data.id;
+                layer.open({
+                    type: 2,
+                    area: ['500px','600px'],
+                    fix: false, //不固定
+                    maxmin: true,
+                    shadeClose: true,
+                    shade: 0.4,
+                    title: "通知详情",
+                    content: url
+                });
             }else if (event === "downloadFile") {
                 // 下载信息表
                 window.location = "doc/report/" + data.id + ".doc";

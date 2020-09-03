@@ -2,12 +2,19 @@ package com.bupt317.study.weeklydemo.util;
 
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.pojo.User;
+import com.bupt317.study.weeklydemo.service.UserService;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class UserUtil {
+
+    @Autowired
+    private UserService userService;
 
     /**
      * 管理员/普通用户 字符串 —> 数据库的perms
@@ -63,7 +70,27 @@ public class UserUtil {
      */
     public static User getLoginUser(){
         Subject subject = SecurityUtils.getSubject();
-        User user = (User)subject.getPrincipal();
-        return user;
+        // 这里loginUser是登陆时候的用户信息, 真正获得用户得用dbUser
+        User loginUser = (User)subject.getPrincipal();
+        return loginUser;
+    }
+
+    /**
+     * 通过salt和明文密码，获得加密后的密码
+     */
+    public static String getEncodedPwd(String pwd, String salt){
+        // 加密次数
+        int times = StaticParams.HASH_ITERATIONS;
+        // 加密方法
+        String algorithmName = StaticParams.HASH_ALGORITHM_NAME;
+        // encode
+        return new SimpleHash(algorithmName, pwd, salt, times).toString();
+    }
+
+    /**
+     * 获得salt，这里是随机数
+     */
+    public static String getNewSalt(){
+        return new SecureRandomNumberGenerator().nextBytes().toString();
     }
 }

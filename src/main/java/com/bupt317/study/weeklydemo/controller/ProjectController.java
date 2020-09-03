@@ -5,8 +5,10 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.pojo.Project;
 import com.bupt317.study.weeklydemo.pojo.Projectmember;
+import com.bupt317.study.weeklydemo.pojo.User;
 import com.bupt317.study.weeklydemo.service.ProjectService;
 import com.bupt317.study.weeklydemo.service.ProjectmemberService;
+import com.bupt317.study.weeklydemo.service.UserService;
 import com.bupt317.study.weeklydemo.util.DateUtil;
 import com.bupt317.study.weeklydemo.util.JsonUtil;
 import com.bupt317.study.weeklydemo.util.ProjectUtil;
@@ -16,6 +18,7 @@ import com.bupt317.study.weeklydemo.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +30,9 @@ public class ProjectController {
 
     @Autowired
     private ProjectmemberService projectmemberService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/projects")
     public DataVO findProjects(){
@@ -104,6 +110,12 @@ public class ProjectController {
             projectmemberService.addProjectmember(new Projectmember(dbProject.getId(), userVO.getId()));
         }
         return DataVO.success();
+    }
+
+    @GetMapping("/projects/users")
+    public DataVO findProjectsByLoginUid(){
+        User user = userService.getLoginDBUser();
+        return projectService.findDataByUid(user.getId());
     }
 
 }

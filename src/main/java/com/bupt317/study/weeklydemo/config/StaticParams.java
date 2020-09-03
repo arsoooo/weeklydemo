@@ -43,4 +43,11 @@ public class StaticParams {
     public static final String USER_MODEL_ROOT = "doc/model/";
     public static final String USER_DOC_ROOT = "doc/user/";
     public static final String USER_REPORT_ROOT = "doc/report/";
+    public static final String USER_REPORT_UPLOAD = "doc/reportUpload/";
+
+    /**
+     * 密码加密方式
+     */
+    public static final String HASH_ALGORITHM_NAME = "md5";// 加密方式
+    public static final Integer HASH_ITERATIONS = 2;// 散列次数
 }

@@ -36,4 +36,14 @@ public class NoticememeberServiceImpl implements NoticememeberService {
     public Integer getFinishCountByUid(int uid) {
         return noticememberMapper.getCountByUidAndStatus(uid, StaticParams.NOTICE_CREATED);
     }
+
+    @Override
+    public String getStatusByNidAndUid(int nid, int uid) {
+        return noticememberMapper.getStatusByNidAndUid(nid, uid);
+    }
+
+    @Override
+    public Integer updateStatusByNidAndUid(String status, int nid, int uid) {
+        return noticememberMapper.updateStatusByNidAndUid(status, nid, uid);
+    }
 }

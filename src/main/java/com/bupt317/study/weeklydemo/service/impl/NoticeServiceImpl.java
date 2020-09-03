@@ -8,6 +8,7 @@ import com.bupt317.study.weeklydemo.service.NoticeService;
 import com.bupt317.study.weeklydemo.service.NoticememeberService;
 import com.bupt317.study.weeklydemo.service.UserService;
 import com.bupt317.study.weeklydemo.util.DateUtil;
+import com.bupt317.study.weeklydemo.util.NoticeUtil;
 import com.bupt317.study.weeklydemo.vo.DataVO;
 import com.bupt317.study.weeklydemo.vo.NoticeVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,17 @@ public class NoticeServiceImpl implements NoticeService {
         List<NoticeVO> noticeVOList = new ArrayList<>();
         List<Notice> noticeList = noticeMapper.selectList(null);
         for (Notice notice : noticeList) {
-            noticeVOList.add(notice2VO(notice));
+            noticeVOList.add(adminNotice2VO(notice));
+        }
+        return DataVO.success(noticeVOList);
+    }
+
+    @Override
+    public DataVO findDataByUid(int uid) {
+        List<NoticeVO> noticeVOList = new ArrayList<>();
+        List<Notice> noticeList = noticeMapper.findNoticeByUid(uid);
+        for (Notice notice : noticeList) {
+            noticeVOList.add(userNotice2VO(notice, uid));
         }
         return DataVO.success(noticeVOList);
     }
@@ -48,10 +59,10 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     /**
-     * notice -> noticeVO 方法
+     * notice -> noticeVO 管理员方法
      * notice，赋给noticeVO给前端展示
      */
-    private NoticeVO notice2VO(Notice notice){
+    private NoticeVO adminNotice2VO(Notice notice){
         NoticeVO noticeVO = new NoticeVO();
         // 会copy的有：id title
         BeanUtil.copyProperties(notice, noticeVO);
@@ -64,6 +75,25 @@ public class NoticeServiceImpl implements NoticeService {
                 userService.findUserNamesByNoticeStatusAndNid(
                         notice.getId(), StaticParams.NOTICE_CREATED)
         );
+        // status用于个人显示已读未读
+        return noticeVO;
+    }
+
+    /**
+     * notice -> noticeVO 用户方法
+     * notice，赋给noticeVO给前端展示
+     */
+    private NoticeVO userNotice2VO(Notice notice, int uid){
+        NoticeVO noticeVO = new NoticeVO();
+        // 会copy的有：id title
+        BeanUtil.copyProperties(notice, noticeVO);
+        // createTimeStr
+        noticeVO.setCreateTimeStr(DateUtil.date2str(notice.getCreateTime()));
+        // allNames(个人用户不用)
+        // notReadNames（个人用户不用）
+        // status
+        noticeVO.setStatus(NoticeUtil.status2desc(
+                noticememeberService.getStatusByNidAndUid(notice.getId(), uid)));
         return noticeVO;
     }
 }

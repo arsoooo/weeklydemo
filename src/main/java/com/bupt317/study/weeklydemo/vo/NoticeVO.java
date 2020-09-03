@@ -6,6 +6,8 @@ public class NoticeVO {
     private String createTimeStr;
     private String allNames;
     private String notReadNames;
+    // 个人公告显示才用，展示已读、未读
+    private String status;
 
     @Override
     public String toString() {
@@ -13,8 +15,9 @@ public class NoticeVO {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", createTimeStr='" + createTimeStr + '\'' +
-                ", userNames='" + allNames + '\'' +
-                ", unReadNames='" + notReadNames + '\'' +
+                ", allNames='" + allNames + '\'' +
+                ", notReadNames='" + notReadNames + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 
@@ -56,5 +59,13 @@ public class NoticeVO {
 
     public void setNotReadNames(String notReadNames) {
         this.notReadNames = notReadNames;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

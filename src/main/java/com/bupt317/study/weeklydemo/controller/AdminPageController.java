@@ -1,9 +1,11 @@
 package com.bupt317.study.weeklydemo.controller;
 
 import com.bupt317.study.weeklydemo.pojo.User;
+import com.bupt317.study.weeklydemo.service.UserService;
 import com.bupt317.study.weeklydemo.util.UserUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class AdminPageController {
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 跳管理员页面
      * 同时会把用户信息传过去，加载用户头像
@@ -21,9 +26,9 @@ public class AdminPageController {
     @RequestMapping("/adminHome")
     public String adminHome(Model model, HttpServletRequest request){
         // 记得恢复，传过去用来加载用户头像
-//        User user = UserUtil.getLoginUser();
-//        model.addAttribute("userImgPath", UserUtil.getUserImgPath(user, request));
-//        model.addAttribute("userName",user.getName());
+        User user = userService.getLoginDBUser();
+        model.addAttribute("userImgPath", UserUtil.getUserImgPath(user, request));
+        model.addAttribute("userName",user.getName());
         return "admin/admin-index";
     }
 

@@ -12,9 +12,19 @@
     <div style="padding-top: 50px; padding-right: 100px">
 
         <div class="layui-form-item">
-            <label class="layui-form-label">修改邮箱</label>
-            <div class="layui-input-block">
-                <input type="text" name="phone" required  lay-verify="required|email" placeholder="请输入新邮箱号码" autocomplete="off" class="layui-input">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" id="userName" name="name" required lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <strong id="nameWarn" style="color: red"></strong>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">用户简介</label>
+            <div class="layui-input-inline">
+                <textarea id="userOther" name="other" placeholder="请输入简介" class="layui-textarea"></textarea>
             </div>
         </div>
 
@@ -23,12 +33,14 @@
                 <button class="layui-btn" lay-submit lay-filter="formDemo">确定</button>
             </div>
         </div>
-
     </div>
 
 </form>
 
 <script>
+    // 预填内容
+    document.getElementById("userName").value = '[[${userName}]]';
+    document.getElementById("userOther").innerText = '[[${userOther}]]';
 
     //Demo
     layui.use('form', function(){
@@ -42,7 +54,7 @@
             // layer.alert(JSON.stringify(data));
             // 异步提交
             $.ajax({
-                url: 'emails',
+                url: 'names',
                 type: 'put',
                 dataType: 'json',
                 data: data,
@@ -60,7 +72,10 @@
                             location.href = "studentEditUser";
                         }, 1000)
                     } else {
-                        //不等于0时填出的内容
+                        //用户名存在判断
+                        if (res.msg === "用户名已存在"){
+                            document.getElementById("nameWarn").innerText = "用户名已存在";
+                        }
                         layer.msg(res.msg)
                     }
                 },

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class PageController {
-    /*
+    /**
      * 跳测试页面（主页面）
      * */
     @RequestMapping("/home")
@@ -18,7 +18,7 @@ public class PageController {
         return "home-simple";
     }
 
-    /*
+    /**
      * 未登录拦截，跳登录页面
      * */
     @RequestMapping("/toLogin")
@@ -27,7 +27,7 @@ public class PageController {
     }
 
 
-    /*
+    /**
      * 跳转未授权提示页面
      * */
     @RequestMapping("/noAuthor")
@@ -36,9 +36,17 @@ public class PageController {
         return "util/noAuthor";
     }
 
-    /*
+    /**
      * 退出登录
      * */
     @RequestMapping("/logout")
     public void logout(){}
+
+    /**
+     * 跳注册界面
+     */
+    @RequestMapping("/toRegister")
+    public String toRegister(){
+        return "login/register";
+    }
 }

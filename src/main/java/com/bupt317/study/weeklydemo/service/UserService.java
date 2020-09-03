@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface UserService {
+    public Integer addUser(User user);
     public Integer getCount();
     public User getByName(String name);
     public User getById(int id);
@@ -22,5 +23,6 @@ public interface UserService {
     public List<UserVO> findUsersByPid(int pid);
     public List<UserVO> findOtherUsersByPid(int pid);
     public DataVO findData();
+    public User getLoginDBUser();
 
 }

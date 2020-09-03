@@ -23,7 +23,7 @@
             </label>
             <div class="layui-input-inline">
                 <!-- //采用inline表示可以继续放 -->
-                <input type="text" name="username" required lay-verify="required" placeholder="请输入用户名"
+                <input type="text" name="username" required lay-verify="required|confirmName" placeholder="请输入用户名"
                        autocomplete="off" class="layui-input" >
             </div>
             <!-- <div class="layui-form-mid layui-word-aux"></div> -->
@@ -33,7 +33,7 @@
                 <i class="layui-icon"> &#xe672;</i>
             </label>
             <div class="layui-input-inline">
-                <input type="password" name="userpassword" required lay-verify="required" placeholder="请输入密码"
+                <input type="password" name="userpassword" required lay-verify="required|confirmPwd" placeholder="请输入密码"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -41,8 +41,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">角色</label>
             <div class="layui-input-block">
-                <input type="radio" name="role" value="teacher" title="老师" checked>
-                <input type="radio" name="role" value="student" title="学生">
+                <input type="radio" name="role" value="student" title="学生" checked>
+                <input type="radio" name="role" value="teacher" title="老师">
             </div>
         </div>
         <div class="layui-form-item">
@@ -54,11 +54,16 @@
             <div class="layui-input-block">
                 <button class="layui-btn" onclick="return false" lay-submit lay-filter="login">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button type="button" class="layui-btn layui-btn-normal" onclick="toRegister()">注册</button>
             </div>
         </div>
     </form>
 </div>
 <script>
+    /*注册按钮*/
+    function toRegister(){
+        location.href = "toRegister";
+    }
     //Demo 拿到你所需要用的layui已经封装好的代码
     layui.use(['jquery', 'form', 'layer'], function () {
         let $ = layui.jquery;
@@ -66,7 +71,7 @@
         let layer = layui.layer;
         //表单验证（页面自动关联,验证结果绑定在表单）
         form.verify({
-            username: function (value, item) { //value：表单的值、item：表单的DOM对象 自定义验证规则
+            confirmName: function (value, item) { //value：表单的值、item：表单的DOM对象 自定义验证规则
                 if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
                     return '用户名不能有特殊字符';
                 }
@@ -74,7 +79,7 @@
                     return '用户名不能全为数字';
                 }
             },
-            userpassword: function (value, item) {
+            confirmPwd: function (value, item) {
                 if (!/^.{1,12}$/img.test(value)) {
                     return "密码必须位1~12位"
                 }

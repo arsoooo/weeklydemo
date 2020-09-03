@@ -23,7 +23,12 @@ public class ImgUtil {
     public static void saveUserImg(User user, MultipartFile image, HttpServletRequest request) {
         try {
             File imageFolder = new File(PathUtil.getROOTPath(request, StaticParams.USER_IMG_ROOT));
-            File file = new File(imageFolder, user.getId() + ".jpg");
+            File file;
+
+            // user不传则变成临时保存的tmp.jpg
+            if(user==null){ file = new File(imageFolder, "tmp.jpg");
+            }else { file = new File(imageFolder, user.getId() + ".jpg"); }
+
             if (!file.getParentFile().exists()) { file.getParentFile().mkdirs(); }
             System.out.println("ImgUtil:" + file.getAbsolutePath());
             // springMVC的上传操作(下载到file)
@@ -55,6 +60,18 @@ public class ImgUtil {
         } catch (InterruptedException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * tmp.jpg转换成uid.jpg
+     */
+    public static void tmpImg2uidImg(User user, HttpServletRequest request){
+        File imageFolder = new File(PathUtil.getROOTPath(request, StaticParams.USER_IMG_ROOT));
+        File oldFile = new File(imageFolder, "tmp.jpg");
+        File newFile = new File(imageFolder, user.getId() + ".jpg");
+        if (oldFile.exists() && oldFile.isFile() && !newFile.exists()) {
+            oldFile.renameTo(newFile);
         }
     }
 

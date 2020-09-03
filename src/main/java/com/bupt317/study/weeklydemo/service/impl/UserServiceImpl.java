@@ -26,6 +26,11 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
+    public Integer addUser(User user) {
+        return userMapper.insert(user);
+    }
+
+    @Override
     public Integer getCount() {
         return userMapper.selectCount(null);
     }
@@ -142,6 +147,15 @@ public class UserServiceImpl implements UserService {
         }
         dataVO.setData(userVOList);
         return dataVO;
+    }
+
+    /**
+     * 获得dbUser确保展示界面是最新的内容
+     */
+    @Override
+    public User getLoginDBUser() {
+        int uid = UserUtil.getLoginUser().getId();
+        return getById(uid);
     }
 
 }

@@ -101,18 +101,18 @@
         // layer.msg(UserImgPath);
     })
 
-    // 判断是否有通知
-    $.ajax({
-        url: 'notices/home',
-        type: 'get',
-        success: function (res) {
-            if (res.code === 1) {
-                //这里失败表示，有通知，才会出现提示，存在msg里面
-                layer.alert(res.msg)
-            }
-            //这里success意味着没有新通知
-        }
-    })
+    // // 判断是否有通知
+    // $.ajax({
+    //     url: 'notices/home',
+    //     type: 'get',
+    //     success: function (res) {
+    //         if (res.code === 1) {
+    //             //这里失败表示，有通知，才会出现提示，存在msg里面
+    //             layer.alert(res.msg)
+    //         }
+    //         //这里success意味着没有新通知
+    //     }
+    // })
 
 
     //添加事件执行

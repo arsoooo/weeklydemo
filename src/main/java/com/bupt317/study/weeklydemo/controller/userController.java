@@ -2,6 +2,7 @@ package com.bupt317.study.weeklydemo.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.pojo.User;
 import com.bupt317.study.weeklydemo.service.UserService;
 import com.bupt317.study.weeklydemo.util.ImgUtil;
@@ -14,6 +15,7 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -122,15 +124,122 @@ public class userController {
     /**
      * 修改头像
      * 没搞懂为啥要强调file才收得到MultipartFile
+     * 而且Put不行
      */
-    @PostMapping("/images")
-    public DataVO uploadUserImg(@RequestParam("file") MultipartFile image, HttpServletRequest request){
-
+    @PostMapping("/editImg")
+    public DataVO editUserImg(@RequestParam("file") MultipartFile image, HttpServletRequest request){
         if(image==null){ return DataVO.fail("请选择一张图片"); }
-        User user = UserUtil.getLoginUser();
+        User user = userService.getLoginDBUser();
         ImgUtil.saveUserImg(user, image, request);
         return DataVO.success();
     }
 
+    /**
+     * 修改用户名 + 简介
+     */
+    @PutMapping("/names")
+    public DataVO editUserName(User user, HttpServletRequest request){
+        // 判断用户名是否存在
+        if(userService.isNameExist(user.getName())){
+            return DataVO.fail("用户名已存在");
+        }
+        // 获得dbuser确保最新
+        User dbUser = userService.getLoginDBUser();
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // 更新信息
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 修改密码
+     */
+    @PutMapping("/passwords")
+    public DataVO editUserPwd(User user,HttpServletRequest request){
+        // 密码加密，并换掉
+        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新
+        String encodedPwd = UserUtil.getEncodedPwd(user.getPassword(), dbUser.getSalt());
+        user.setPassword(encodedPwd);
+        // copy过去
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // update
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 修改电话
+     */
+    @PutMapping("/phones")
+    public DataVO editUserPhone(User user, HttpServletRequest request){
+        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新
+        // copy过去
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // update
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 修改邮箱
+     */
+    @PutMapping("/emails")
+    public DataVO editUserEmail(User user, HttpServletRequest request){
+        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新
+        // copy过去
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // update
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 注册用户上传的头像 -> tmp.jpg
+     */
+    @PostMapping("/images")
+    public DataVO uploadUserImg(@RequestParam("file") MultipartFile image, HttpServletRequest request){
+        if(image==null){ return DataVO.fail("请选择一张图片"); }
+        ImgUtil.saveUserImg(null, image, request);  // user给null说明保存为tmp.jpg
+        DataVO dataVO = new DataVO(0, image.getOriginalFilename());
+        return dataVO;  // 把文件名给过去，前端显示
+    }
+
+    /**
+     * 用户注册
+     */
+    @PostMapping("/users")
+    public DataVO register(User user, HttpServletRequest request){
+        System.out.println("异步获取注册内容");
+        // 判断用户名是否存在
+        if(userService.isNameExist(user.getName())){
+            return DataVO.fail("用户名已存在");
+        }
+        // 设置权限
+        user.setPerms(StaticParams.USER_PERMS);
+        // 设置salt、密码加密
+        user.setSalt(UserUtil.getNewSalt());
+        String inputPwd = user.getPassword();
+        user.setPassword(UserUtil.getEncodedPwd(inputPwd, user.getSalt()));
+        // 添加到database
+        userService.addUser(user);
+        // 通过user的uid -> 转换tmp.jpg
+        ImgUtil.tmpImg2uidImg(user, request);
+        // 新建用户信息表
+        WordUtil.writeUserDoc(user, request);
+
+        return DataVO.success();
+    }
 
 }

@@ -27,6 +27,11 @@ public class ReportServiceImpl implements ReportService {
     private UserService userService;
 
     @Override
+    public Integer addReport(Report report) {
+        return reportMapper.insert(report);
+    }
+
+    @Override
     public DataVO findData() {
         DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE,null);
         dataVO.setCount(reportMapper.selectCount(null));

@@ -10,4 +10,6 @@ public interface NoticememeberService {
     public Integer addNoticeMemeber(Noticemember noticemember);
     public String fineUserNamesByNid(int nid);
     public Integer getFinishCountByUid(int uid);
+    public String getStatusByNidAndUid(int nid, int uid);
+    public Integer updateStatusByNidAndUid(String status, int nid, int uid);
 }
