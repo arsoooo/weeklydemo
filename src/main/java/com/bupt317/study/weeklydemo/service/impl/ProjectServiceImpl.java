@@ -129,4 +129,9 @@ public class ProjectServiceImpl implements ProjectService {
     public int updateProject(Project project) {
         return projectMapper.updateById(project);
     }
+
+    @Override
+    public Integer deleteByPid(int pid) {
+        return projectMapper.deleteById(pid);
+    }
 }

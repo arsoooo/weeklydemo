@@ -75,4 +75,15 @@ public class ImgUtil {
         }
     }
 
+    /**
+     * 删除用户照片
+     */
+    public static void deleteUserImg(int uid, HttpServletRequest request){
+        File imageFolder = new File(PathUtil.getROOTPath(request, StaticParams.USER_IMG_ROOT));
+        File file = new File(imageFolder, uid + ".jpg");
+        if(!file.delete()){
+            System.out.println("删除出现错误！");
+        }
+    }
+
 }

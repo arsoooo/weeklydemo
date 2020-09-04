@@ -9,6 +9,7 @@ import com.bupt317.study.weeklydemo.service.ReportService;
 import com.bupt317.study.weeklydemo.service.UserService;
 import com.bupt317.study.weeklydemo.util.WordUtil;
 import com.bupt317.study.weeklydemo.vo.DataVO;
+import com.bupt317.study.weeklydemo.vo.ReportVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,33 +26,41 @@ public class ReportController {
     @Autowired
     private UserService userService;
 
-    //////////////////////// 管理员界面 ////////////////////////
+    //////////////////////// 管理员 ////////////////////////
 
-    @GetMapping("/reports")
+    /**
+     * 管理员
+     * 获得所有周报信息
+     */
+    @GetMapping("/admin/reports")
     public DataVO findReports(){
         return reportService.findData();
     }
 
-    @GetMapping("/reports/{rid}")
-    public DataVO getReportById(@PathVariable("rid") int rid){
+    /**
+     * 管理员
+     * 根据rid获得一个周报的信息
+     */
+    @GetMapping("/admin/reports/{rid}")
+    public DataVO getReportByRid(@PathVariable("rid") int rid){
         return DataVO.success(reportService.getReportVOById(rid));
     }
 
     /**
+     * 管理员
      * 通过uid获得用户的所有周报
-     * 管理员查看某个用户用的到
      */
-    @GetMapping("/reports/users/{uid}")
-    public DataVO getUserReportByUid(@PathVariable("uid") int uid){
+    @GetMapping("/admin/reports/users/{uid}")
+    public DataVO findUserReportByUid(@PathVariable("uid") int uid){
         return reportService.findDataByUid(uid);
     }
 
     /**
-     * 周报的修改（修改内容，添加点评）
-     * 管理员操作
+     * 管理员
+     * 对周报修改（修改内容，添加点评）
      */
-    @PutMapping("/reports/{rid}")
-    public DataVO updateReport(
+    @PutMapping("/admin/reports/{rid}")
+    public DataVO updateReportByRid(
             @PathVariable("rid") int rid,
             Report report,
             HttpServletRequest request
@@ -74,20 +83,51 @@ public class ReportController {
         return DataVO.success();
     }
 
-    //////////////////////// 用户界面 ////////////////////////
+    /**
+     * 管理员
+     * 删除某个周报
+     */
+    @DeleteMapping("/admin/reports/{rid}")
+    public DataVO delUserReportByRid(@PathVariable("rid") int rid, HttpServletRequest request){
+        // 删除上传表和周报表
+        WordUtil.deleteReportDoc(rid, request);
+        // 删除database相关信息
+        int count = reportService.deleteByRid(rid);
+        return DataVO.success(count);
+    }
+
+    //////////////////////// 普通用户 ////////////////////////
 
     /**
-     * 通过uid获得用户的所有周报
-     * 管理员查看某个用户用的到
+     * 普通用户
+     * 根据当前登录用户获得其所有周报
      */
-    @GetMapping("/reports/users")
-    public DataVO getUserReportByLoginUid(){
+    @GetMapping("/reports")
+    public DataVO findUserReportByLoginUid(){
         // 通过登录用户的id去查，而不是传过来的id，这和管理员不同
         User user = userService.getLoginDBUser();
         return reportService.findDataByUid(user.getId());
     }
 
     /**
+     * 普通用户
+     * 与管理员不同，增加了验证rid是否是该用户的，否则查不到内容
+     * 根据rid获得一个周报的信息
+     */
+    @GetMapping("/reports/{rid}")
+    public DataVO getReportByRidWithAuth(@PathVariable("rid") int rid){
+        User user = userService.getLoginDBUser();
+        ReportVO reportVO = reportService.getReportVOById(rid);
+        // 根据用户名判断是否是该用户的周报，是的则传过去
+        if(user.getName().equals(reportVO.getUserName())){
+            return DataVO.success(reportVO);
+        }
+        // 不是该用用户的周报就啥也不传
+        return DataVO.success();
+    }
+
+    /**
+     * 普通用户
      * 处理上传的周报文件
      */
     @PostMapping("/reports")
@@ -107,5 +147,24 @@ public class ReportController {
         WordUtil.writeReportDoc(report, user, request);
 
         return DataVO.success();
+    }
+
+    /**
+     * 普通用户
+     * 删除某个周报（与管理员不同，要验证用户是否有该周报）
+     */
+    @DeleteMapping("/reports/{rid}")
+    public DataVO delUserReportByRidWithAuth(@PathVariable("rid") int rid, HttpServletRequest request){
+        // 如果这个用户没有这个公告，就不能删除
+        Report report = reportService.getById(rid);
+        User user = userService.getLoginDBUser();
+        if(!report.getUid().equals(user.getId())){
+            return DataVO.fail("只能删除自己的公告！");
+        }
+        // 删除上传表和周报表
+        WordUtil.deleteReportDoc(rid, request);
+        // 删除database相关信息
+        int count = reportService.deleteByRid(rid);
+        return DataVO.success(count);
     }
 }

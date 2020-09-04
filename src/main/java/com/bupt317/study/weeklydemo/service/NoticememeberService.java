@@ -12,4 +12,5 @@ public interface NoticememeberService {
     public Integer getFinishCountByUid(int uid);
     public String getStatusByNidAndUid(int nid, int uid);
     public Integer updateStatusByNidAndUid(String status, int nid, int uid);
+    public Integer deleteNoticeMemberByNidAndUid(int nid, int uid);
 }

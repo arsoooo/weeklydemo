@@ -118,13 +118,13 @@
                     });
                 },
                 success: function (res) {
-                    if (res.code == 0) {
+                    if (res.code === 0) {
                         //res.code == 0,表示用户输入成功，1表示失败
                         //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
                         layer.msg("添加完成", {icon: 1})
                         setTimeout(function () {
                             //如果输入成功，可以跳到另一个你需要的界面
-                            location.href = "adminListProject";
+                            location.href = "studentListProject";
                         }, 1000)
                     } else {
                         //不等于0时填出的内容

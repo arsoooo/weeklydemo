@@ -14,6 +14,7 @@ import com.bupt317.study.weeklydemo.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -28,14 +29,35 @@ public class NoticeController {
     @Autowired
     private UserService userService;
 
-    //////////////////////// 管理员界面 ////////////////////////
+    //////////////////////// 所有用户 ////////////////////////
 
-    @GetMapping("/notices")
+    /**
+     * 所有用户（可改管理员，但需要加用户自己的查看）
+     * 根据nid获得公告的信息
+     */
+    @GetMapping("/notices/{nid}")
+    public DataVO getNoticeByNid(
+            @PathVariable("nid") int nid
+    ){
+        return DataVO.success(noticeService.getById(nid));
+    }
+
+    //////////////////////// 管理员 ////////////////////////
+
+    /**
+     * 管理员
+     * 查看所有的公告
+     */
+    @GetMapping("/admin/notices")
     public DataVO listNotices(){
         return noticeService.findData();
     }
 
-    @PostMapping("/notices")
+    /**
+     * 管理员
+     * 发布一个公告
+     */
+    @PostMapping("/admin/notices")
     public DataVO addNotice(
         @RequestParam(value = "users") String users,
         Notice notice
@@ -55,16 +77,20 @@ public class NoticeController {
         return DataVO.success();
     }
 
-    @GetMapping("/notices/{nid}")
-    public DataVO getNoticeByNid(
-            @PathVariable("nid") int nid
-    ){
-        return DataVO.success(noticeService.getById(nid));
+    /**
+     * 管理员
+     * 删除某个公告(和用户删除区别，这里是删除公告，级联删除了中间表)
+     */
+    @DeleteMapping("/admin/notices/{nid}")
+    public DataVO delNoticeByNid(@PathVariable("nid") int nid){
+        int count = noticeService.deleteByNid(nid);
+        return DataVO.success(count);
     }
 
-    //////////////////////// 用户界面 ////////////////////////
+    //////////////////////// 普通用户 ////////////////////////
 
     /**
+     * 普通用户
      * 用于检查用户有几条未读信息
      */
     @GetMapping("/notices/home")
@@ -83,6 +109,7 @@ public class NoticeController {
     }
 
     /**
+     * 普通用户
      * 获取当前用户的所有消息公告
      */
     @GetMapping("/notices/user")
@@ -92,6 +119,7 @@ public class NoticeController {
     }
 
     /**
+     * 普通用户
      * 将通知标为已读
      */
     @PutMapping("/notices/{nid}")
@@ -103,6 +131,22 @@ public class NoticeController {
                 StaticParams.NOTICE_FINISH, nid, user.getId());
         if(count!=1){ return DataVO.fail("error：更新了"+count+"条"); } // 防止出错，用uid和nid应该只删除了一条
         return DataVO.success();
+    }
+
+    /**
+     * 普通用户
+     * 删除某个公告(和管理员删除区别，这里是删除删除中间表，不影响其他用户收到公告)
+     * 可以修改成用户删除是不删除信息表的
+     */
+    @DeleteMapping("/notices/{nid}")
+    public DataVO delNoticeByNidWithAuth(@PathVariable("nid") int nid){
+        try {
+            User user = userService.getLoginDBUser();
+            int count = noticememeberService.deleteNoticeMemberByNidAndUid(nid, user.getId());
+            return DataVO.success(count);
+        }catch (Exception e){
+            return DataVO.fail("未正确删除！");
+        }
     }
 
 }

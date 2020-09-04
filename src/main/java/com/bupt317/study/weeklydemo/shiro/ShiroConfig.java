@@ -37,20 +37,24 @@ public class ShiroConfig {
 //        filerMap.put("/update", "authc");
         //静态资源
 //        filerMap.put("/../webapp/**", "anon");
-        filerMap.put("/css/**", "anon");  // 注：每个都设置也可以
-        filerMap.put("/img/**", "anon");
-        filerMap.put("/js/**", "anon");
-        filerMap.put("/layer/**", "anon");
-        filerMap.put("/layui/**", "anon");
+//        filerMap.put("/css/**", "anon");  // 注：每个都设置也可以
+//        filerMap.put("/img/**", "anon");
+//        filerMap.put("/js/**", "anon");
+//        filerMap.put("/layer/**", "anon");
+//        filerMap.put("/layui/**", "anon");
 
          // 主页面
 //        filerMap.put("/home", "anon");
         // 登录页面(管理员和普通用户都跳转至此)
         filerMap.put("/login", "anon");  // 异步验证账户密码
         filerMap.put("/toRegister", "anon");  // 跳注册界面
+        filerMap.put("/images", "anon");  // 上传注册头像
+        filerMap.put("/register", "anon"); // 异步上传注册信息
+
         // 授权过滤器(到底是文件夹还是方法名？ - 可能是都拦截)
         // 授权过滤器 - 换成了包含admin的所有控制器跳转
-        filerMap.put("/admin*", "perms[" + StaticParams.ADMIN_PERMS + "]");
+        filerMap.put("/admin*", "perms[" + StaticParams.ADMIN_PERMS + "]"); // 管理员的网页跳转
+        filerMap.put("/admin/**", "perms[" + StaticParams.ADMIN_PERMS + "]"); // 管理员的网页异步获取json
         // 退出登录按钮
         filerMap.put("/logout", "logout");  // 跳登出界面
         filerMap.put("/**", "authc");// 拦截其他页面（需要认证）

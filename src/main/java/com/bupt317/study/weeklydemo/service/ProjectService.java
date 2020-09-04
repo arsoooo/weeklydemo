@@ -12,4 +12,5 @@ public interface ProjectService {
     public ProjectVO getProjectVOByPid(int pid);
     public int addProject(Project project);
     public int updateProject(Project project);
+    public Integer deleteByPid(int pid);
 }

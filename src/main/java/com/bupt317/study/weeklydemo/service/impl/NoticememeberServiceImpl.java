@@ -46,4 +46,9 @@ public class NoticememeberServiceImpl implements NoticememeberService {
     public Integer updateStatusByNidAndUid(String status, int nid, int uid) {
         return noticememberMapper.updateStatusByNidAndUid(status, nid, uid);
     }
+
+    @Override
+    public Integer deleteNoticeMemberByNidAndUid(int nid, int uid) {
+        return noticememberMapper.deleteNoticeMemberByNidAndUid(nid, uid);
+    }
 }

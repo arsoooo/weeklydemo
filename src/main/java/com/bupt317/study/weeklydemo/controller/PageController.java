@@ -32,7 +32,7 @@ public class PageController {
      * */
     @RequestMapping("/noAuthor")
     public String noAuthor(Model model){
-        System.out.println("find no autor");
+//        System.out.println("find no author");
         return "util/noAuthor";
     }
 

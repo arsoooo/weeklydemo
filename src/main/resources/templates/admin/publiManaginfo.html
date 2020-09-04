@@ -49,7 +49,7 @@
 
         // ajax异步请求res
         $.ajax({
-            url: 'reports/'+rid,
+            url: 'admin/reports/'+rid,
             type: 'get',
             success: function (res) {
                 console.log(res)
@@ -72,7 +72,7 @@
             // layer.alert(JSON.stringify(data));
             // 异步提交
             $.ajax({
-                url: 'reports/'+rid, // 这里加上uid是为了获得dbUser
+                url: 'admin/reports/'+rid, // 这里加上uid是为了获得dbUser
                 type: 'put',
                 dataType: 'json',
                 data: data,

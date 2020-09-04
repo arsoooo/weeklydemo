@@ -24,5 +24,6 @@ public interface UserService {
     public List<UserVO> findOtherUsersByPid(int pid);
     public DataVO findData();
     public User getLoginDBUser();
+    public Integer deleteByUid(int uid);
 
 }

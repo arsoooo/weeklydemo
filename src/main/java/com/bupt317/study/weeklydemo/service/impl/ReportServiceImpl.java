@@ -57,6 +57,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public List<Integer> findRidByUid(int uid) {
+        return reportMapper.findRidByUid(uid);
+    }
+
+    @Override
     public Report getById(int id) {
         return reportMapper.selectById(id);
     }
@@ -73,6 +78,11 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Integer updateReport(Report report) {
         return reportMapper.updateById(report);
+    }
+
+    @Override
+    public Integer deleteByRid(int rid) {
+        return reportMapper.deleteById(rid);
     }
 
     /**

@@ -8,4 +8,5 @@ public interface NoticeService {
     public DataVO findDataByUid(int uid);
     public Integer addNotice(Notice notice);
     public Notice getById(int id);
+    public Integer deleteByNid(int nid);
 }

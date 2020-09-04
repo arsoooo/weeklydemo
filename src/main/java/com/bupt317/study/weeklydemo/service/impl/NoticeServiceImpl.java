@@ -58,6 +58,11 @@ public class NoticeServiceImpl implements NoticeService {
         return noticeMapper.selectById(id);
     }
 
+    @Override
+    public Integer deleteByNid(int nid) {
+        return noticeMapper.deleteById(nid);
+    }
+
     /**
      * notice -> noticeVO 管理员方法
      * notice，赋给noticeVO给前端展示

@@ -182,4 +182,31 @@ public class WordUtil {
             oldFile.renameTo(newFile);
         }
     }
+
+    /**
+     * 删除用户信息表
+     */
+    public static void deleteUserDoc(int uid, HttpServletRequest request){
+        File imageFolder = new File(PathUtil.getROOTPath(request, StaticParams.USER_DOC_ROOT));
+        File file = new File(imageFolder, uid + ".doc");
+        if(!file.delete()){
+            System.out.println("删除出现错误！");
+        }
+    }
+
+    /**
+     * 删除周报上传原件和周报信息表
+     */
+    public static void deleteReportDoc(int rid, HttpServletRequest request){
+        File uploadFolder = new File(PathUtil.getROOTPath(request, StaticParams.USER_REPORT_UPLOAD));
+        File uploadFile = new File(uploadFolder, rid + ".doc");
+        if(!uploadFile.delete()){
+            System.out.println("上传原件删除出现错误！");
+        }
+        File reportFolder = new File(PathUtil.getROOTPath(request, StaticParams.USER_REPORT_ROOT));
+        File reportFile = new File(reportFolder, rid + ".doc");
+        if(!reportFile.delete()){
+            System.out.println("周报表删除出现错误！");
+        }
+    }
 }

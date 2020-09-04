@@ -26,7 +26,7 @@
 
         table.render({
             elem:"#tableData",
-            url:"reports/users/" + uid,
+            url:"admin/reports/users/" + uid,
             method:"get",
             cols:[
                 [
@@ -52,10 +52,28 @@
                 location.href = url;
 
             }else if (event === "delete"){
-                layer.confirm('是否要删除？', {
+                layer.confirm('是否要删除？(会删除相关信息、周报上传文件和信息表)', {
                     btn: ['确定','取消'] //按钮
-                }, function(){
-                    layer.msg("删除成功");
+                }, function () {
+                    // 进行删除
+                    $.ajax({
+                        url: "admin/reports/" + data.id,
+                        type: "delete",
+                        data: null,
+                        dataType: "json",
+                        success: function (res) {
+                            if (res.code === 0) {
+                                layer.msg("已删除"+res.data+"条数据！");
+                                setTimeout(function () {
+                                    //如果输入成功，可以跳到另一个你需要的界面
+                                    location.href = "adminListReport";
+                                }, 1000)
+                            }else {
+                                layer.msg(res.msg);
+                            }
+                        }
+                    });
+                }, function () {
                 });
             }
         })

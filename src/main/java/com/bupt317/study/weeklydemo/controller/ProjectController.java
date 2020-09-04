@@ -34,16 +34,12 @@ public class ProjectController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/projects")
-    public DataVO findProjects(){
-        return projectService.findData();
-    }
+    //////////////////////// 所有用户 ////////////////////////
 
-    @GetMapping("/projects/users/{uid}")
-    public DataVO findProjectsByUid(@PathVariable("uid") int uid){
-        return projectService.findDataByUid(uid);
-    }
-
+    /**
+     * 所有用户
+     * 新建一个项目
+     */
     @PostMapping("/projects")
     public DataVO addProject(
             Project project,
@@ -71,12 +67,20 @@ public class ProjectController {
         return DataVO.success();
     }
 
+    /**
+     * 所有用户（也可改只能管理员，加上一个用户单独的检查，同report）
+     * 根据pid查看项目信息
+     */
     @GetMapping("/projects/{pid}")
     public DataVO getProjectByPid(@PathVariable("pid") int pid){
         ProjectVO projectVO = projectService.getProjectVOByPid(pid);
         return DataVO.success(projectVO);
     }
 
+    /**
+     * 所有用户（也可改只能管理员，加上一个用户单独的检查，同report）
+     * 编辑一个项目的内容
+     */
     @PutMapping("/projects/{pid}")
     public DataVO editProjectByPid(
             @PathVariable("pid") int pid,
@@ -103,7 +107,7 @@ public class ProjectController {
             // 根据pid和uid删除projectmember
             projectmemberService.delProjectMemberByPidAndUid(dbProject.getId(), userVO.getId());
         }
-         // 根据addUsers增加projectmember表
+        // 根据addUsers增加projectmember表
         List<UserVO> addUserVOList = JsonUtil.jsonStr2UserVOList(addUsers);
         for (UserVO userVO : addUserVOList) {
             // 根据pid和uid增加projectmember
@@ -112,6 +116,42 @@ public class ProjectController {
         return DataVO.success();
     }
 
+    //////////////////////// 管理员 ////////////////////////
+
+    /**
+     * 管理员
+     * 查看所有项目
+     */
+    @GetMapping("/admin/projects")
+    public DataVO findProjects(){
+        return projectService.findData();
+    }
+
+    /**
+     * 管理员
+     * 查看一个用户的所有项目
+     */
+    @GetMapping("/admin/projects/users/{uid}")
+    public DataVO findProjectsByUid(@PathVariable("uid") int uid){
+        return projectService.findDataByUid(uid);
+    }
+
+    /**
+     * 管理员
+     * 根据pid删除一个项目
+     */
+    @DeleteMapping("/admin/projects/{pid}")
+    public DataVO delProjectsByPid(@PathVariable("pid") int pid){
+        int count = projectService.deleteByPid(pid);
+        return DataVO.success(count);
+    }
+
+    //////////////////////// 普通用户 ////////////////////////
+
+    /**
+     * 普通用户
+     * 根据登录用户，查询用户的所有项目
+     */
     @GetMapping("/projects/users")
     public DataVO findProjectsByLoginUid(){
         User user = userService.getLoginDBUser();

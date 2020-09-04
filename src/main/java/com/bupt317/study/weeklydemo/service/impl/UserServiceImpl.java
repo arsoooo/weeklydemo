@@ -158,4 +158,9 @@ public class UserServiceImpl implements UserService {
         return getById(uid);
     }
 
+    @Override
+    public Integer deleteByUid(int uid) {
+        return userMapper.deleteById(uid);
+    }
+
 }
