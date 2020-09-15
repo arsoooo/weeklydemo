@@ -1,6 +1,16 @@
 package com.bupt317.study.weeklydemo.config;
 
 public class StaticParams {
+
+    /**
+     * 确定运行环境，自己设置
+     * jar：用home.getSource()获得jar包运行位置的目录,
+     * 并设置对应上传的文件名
+     * windows：用request.getServletContext().getRealPath(root)获得当前项目根目录
+     */
+    public static String RUNNING_ENVIRONMENT = "windows";
+    public static String STATIC_FOLD_NAME = "webapp";
+
     /**
      * 登录验证返回
      * 正确or错误

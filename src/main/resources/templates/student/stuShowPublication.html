@@ -29,6 +29,12 @@
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="demo1">提交修改(标题、内容)</button>
+            </div>
+        </div>
+
     </div>
 
 </form>
@@ -58,6 +64,54 @@
                 }
             }
         })
+
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            // layer.msg(JSON.stringify(data.field));
+            // var data = form.val('example');
+            // layer.alert(data.field.title);
+            // layer.alert(JSON.stringify(data.title));
+            // 异步提交
+            $.ajax({
+                url: 'reports/'+rid, // 这里加上uid是为了获得dbUser
+                type: 'put',
+                dataType: 'json',
+                data: {
+                    //这里用project接收，名称与赋值的时候取projectVO不同
+                    title: data.field.title,
+                    content:data.field.content
+                },
+                beforeSend: function () {
+                    //弹出的lodinng层
+                    layer.load(2, {
+                        shade: [0.5, "#333"]
+                    });
+                },
+                success: function (res) {
+                    if (res.code === 0) {
+                        //res.code == 0,表示用户输入成功，1表示失败
+                        //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
+                        layer.msg("修改完成", {icon: 1})
+                        setTimeout(function () {
+                            //如果输入成功，可以跳到另一个你需要的界面
+                            location.href = "adminListReport";
+                        }, 1000)
+                    } else {
+                        //不等于0时填出的内容
+                        layer.msg(res.msg)
+                    }
+                },
+                error: function () {
+                    //用户输入与接口内容不对应，显示文字
+                    layer.msg("网络繁忙，访问失败")
+                },
+                complete: function () {
+                    //关掉loading
+                    layer.closeAll("loading")
+                }
+            })
+            return false;
+        });
 
     });
 </script>

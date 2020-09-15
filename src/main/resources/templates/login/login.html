@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>实验室人员管理系统</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" type=text/css href="layui/css/layui.css" media="all">
     <link rel="stylesheet" type=text/css href="css/login.css">
     <script src="js/jquery/2.0.0/jquery.min.js"></script>
@@ -121,14 +118,14 @@
             // 判断选的是老师还是学生登录
             if (data.role === "teacher") {
                 $.ajax({
-                    url: 'login',
+                    url: 'teacherLogin',
                     type: 'post',
                     dataType: 'json',
                     data: data,
                     // data: {
-                        // //监听的内容有哪些,你的登陆界面上用户输入的有哪些，就监听那些
-                        // name: $('input[name="name"]').val(),
-                        // password: $('input[name="password"]').val()
+                    // //监听的内容有哪些,你的登陆界面上用户输入的有哪些，就监听那些
+                    // name: $('input[name="name"]').val(),
+                    // password: $('input[name="password"]').val()
                     // },
                     beforeSend: function () {
                         //弹出的lodinng层
@@ -138,7 +135,7 @@
                     },
                     success: function (res) {
                         if (res.code === 0) {
-                                //res.code == 0,表示用户输入成功，1表示失败
+                            //res.code == 0,表示用户输入成功，1表示失败
                             //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
                             layer.msg("登陆成功", {icon: 1})
                             setTimeout(function () {
@@ -161,7 +158,7 @@
                 })
             } else {
                 $.ajax({
-                    url: 'login',
+                    url: 'studentLogin',
                     type: 'post',
                     dataType: 'json',
                     data: data, // 直接用表单数据

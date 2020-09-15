@@ -106,9 +106,9 @@
     });
 </script>
 
-<!--监听提交，获取内容，跳转-->
 <script>
-    //Demo
+
+    <!--监听提交,获取内容,跳转-->
     layui.use('form', function () {
         // 定义form
         var form = layui.form;
@@ -150,6 +150,7 @@
             // var data = form.val('example');
             // layer.alert(data);
             // layer.alert($('input[name=statusStr]:checked').val())
+
             $.ajax({
                 url: 'projects/' + pid,
                 type: 'put',
@@ -196,21 +197,6 @@
         });
     });
 </script>
-
-<script>
-    //Demo
-    layui.use('form', function () {
-        var form = layui.form;
-
-        //监听提交
-        form.on('submit(formDemo)', function (data) {
-            layer.msg(JSON.stringify(data.field));
-            return false;
-        });
-    });
-</script>
-
-
 
 <script>
     <!--日期选择器所需-->

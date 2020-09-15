@@ -12,12 +12,12 @@ public class TestEncryption {
         * String转换成byte用ByteSource salt = ByteSource.Util.bytes
         * shiro自动判断只支持byte
         * */
-        String password = "1";
+        String password = "a";
         // 盐
-        String salt = new SecureRandomNumberGenerator().nextBytes().toString();
+//        String salt = new SecureRandomNumberGenerator().nextBytes().toString();
         //x32isd83V9ymbFlbIFXKpw== : 5803e923c2a957b1710a2b7678f8b090
         //x0ejwfU5Z+E1yJJ4B3cuPg== : f686c358123a16a5cfbe8fb835aee613
-//        salt = "YQ==";
+        String salt = "x0ejwfU5Z+E1yJJ4B3cuPg==";
 //        ByteSource salt = ByteSource.Util.bytes("x0ejwfU5Z+E1yJJ4B3cuPg==");
         System.out.println(salt);
         // 加密次数

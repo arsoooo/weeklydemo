@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,25 +33,55 @@ public class userController {
     private ReportService reportService;
 
     //////////////////////// 所有用户 ////////////////////////
-
     /**
      * 所有用户
-     * 普通用户创项目要选成员也要用
+     * 创项目要选成员用（不列出管理员）
      * 查询所有UserVO -> DataVO.data
      */
     @GetMapping("/users")
     public DataVO findUsers(){
-        return userService.findData();
+        return userService.findData(StaticParams.USER_PERMS);
+    }
+
+
+    /**
+     * 教师 对输入的账户密码登录验证
+     * */
+    @PostMapping("/teacherLogin")
+    public DataVO teacherLogin(
+            User user
+    ){
+        DataVO result = login(user);
+        User dbUser = userService.getLoginDBUser();
+        // 如果学生以教师身份登录，则返回错误
+        if(StaticParams.USER_PERMS.equals(dbUser.getPerms())){
+            return DataVO.fail("该用户为学生，请以学生身份登录！");
+        }
+        // 否则正常
+        return result;
     }
 
     /**
-     * 所有用户
-     * 对输入的账户密码登录验证
+     * 学生 对输入的账户密码登录验证
      * */
-    @PostMapping("/login")
-    public Object login(
+    @PostMapping("/studentLogin")
+    public DataVO studentLogin(
             User user
     ){
+        DataVO result = login(user);
+        User dbUser = userService.getLoginDBUser();
+        // 如果教师以学生身份登录，则返回错误
+        if(StaticParams.ADMIN_PERMS.equals(dbUser.getPerms())){
+            return DataVO.fail("该用户为管理员，请以教师身份登录！");
+        }
+        // 否则正常
+        return result;
+    }
+
+    /**
+     * 给教师登录和学生登录用的一个封装函数
+     */
+    private DataVO login(User user){
         // 会从表单中获得name 和 password
 //        System.out.println(user);
         // 1.SecurityUtils获得subject
@@ -59,15 +90,17 @@ public class userController {
         UsernamePasswordToken token = new UsernamePasswordToken(user.getName(), user.getPassword());
         try {
             // 3.执行登录方法subject.login(token) -> 执行认证逻辑
+            System.out.println(new Date());
             subject.login(token);
+            System.out.println(new Date() + "：shiro终于好了。。");
             // 正确跳转test控制器,把对象取到，id传过去
             return DataVO.success(((User)subject.getPrincipal()).getId());
         }catch(UnknownAccountException e){
             // 直接跳html，有m要传
-//            System.out.println("用户名不存在！");
+            System.out.println("用户名不存在！");
             return DataVO.fail("用户名不存在！");
         }catch (IncorrectCredentialsException e) {
-//            System.out.println("密码不正确！");
+            System.out.println("密码不正确！");
             return DataVO.fail("密码不正确！");
         }
     }
@@ -129,7 +162,116 @@ public class userController {
         return DataVO.success(userService.findUsersByPid(pid));
     }
 
+    //////////////////////// 用户中心 ////////////////////////
+
+    /**
+     * 所有用户
+     * 修改头像
+     * 没搞懂为啥要强调file才收得到MultipartFile、而且Put不行
+     */
+    @PostMapping("/editImg")
+    public DataVO editUserImg(@RequestParam("file") MultipartFile image, HttpServletRequest request){
+        if(image==null){ return DataVO.fail("请选择一张图片"); }
+        User user = userService.getLoginDBUser();
+        ImgUtil.saveUserImg(user, image, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 所有用户
+     * 修改用户名 + 简介
+     */
+    @PutMapping("/names")
+    public DataVO editUserName(User user, HttpServletRequest request){
+        // 判断用户名是否存在
+        if(userService.isNameExist(user.getName())){
+            return DataVO.fail("用户名已存在");
+        }
+        // 获得dbuser确保最新，并且确保是修改自己
+        User dbUser = userService.getLoginDBUser();
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // 更新信息
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 所有用户
+     * 修改密码
+     */
+    @PutMapping("/passwords")
+    public DataVO editUserPwd(
+            User user,
+            @RequestParam(value = "oldPwd") String oldPwd,
+            HttpServletRequest request){
+
+        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新，并且确保是修改自己
+
+        // 加入原始密码的判断
+        if(!dbUser.getPassword().equals(oldPwd)){
+            return DataVO.fail("原密码输入错误！！");
+        }
+        // 密码加密，并换掉
+        String encodedPwd = UserUtil.getEncodedPwd(user.getPassword(), dbUser.getSalt());
+        user.setPassword(encodedPwd);
+        // copy过去
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // update
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 所有用户
+     * 修改电话
+     */
+    @PutMapping("/phones")
+    public DataVO editUserPhone(User user, HttpServletRequest request){
+        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新，并且确保是修改自己
+        // copy过去
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // update
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
+    /**
+     * 所有用户
+     * 修改邮箱
+     */
+    @PutMapping("/emails")
+    public DataVO editUserEmail(User user, HttpServletRequest request){
+        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新，并且确保是修改自己
+        // copy过去
+        BeanUtil.copyProperties(user, dbUser,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // update
+        userService.updateUser(dbUser);
+        // 更新用户信息表
+        WordUtil.writeUserDoc(dbUser, request);
+        return DataVO.success();
+    }
+
     //////////////////////// 管理员 ////////////////////////
+
+    /**
+     * 管理员
+     * 查看所有用户用
+     * 查询所有UserVO -> DataVO.data
+     */
+    @GetMapping("/admin/users")
+    public DataVO findAllUsers(){
+        return userService.findData(null);
+    }
 
     /**
      * 管理员
@@ -183,92 +325,6 @@ public class userController {
 
     //////////////////////// 普通用户 ////////////////////////
 
-    /**
-     * 普通用户
-     * 修改头像
-     * 没搞懂为啥要强调file才收得到MultipartFile、而且Put不行
-     */
-    @PostMapping("/editImg")
-    public DataVO editUserImg(@RequestParam("file") MultipartFile image, HttpServletRequest request){
-        if(image==null){ return DataVO.fail("请选择一张图片"); }
-        User user = userService.getLoginDBUser();
-        ImgUtil.saveUserImg(user, image, request);
-        return DataVO.success();
-    }
 
-    /**
-     * 普通用户
-     * 修改用户名 + 简介
-     */
-    @PutMapping("/names")
-    public DataVO editUserName(User user, HttpServletRequest request){
-        // 判断用户名是否存在
-        if(userService.isNameExist(user.getName())){
-            return DataVO.fail("用户名已存在");
-        }
-        // 获得dbuser确保最新，并且确保是修改自己
-        User dbUser = userService.getLoginDBUser();
-        BeanUtil.copyProperties(user, dbUser,
-                true, CopyOptions.create().setIgnoreNullValue(true));
-        // 更新信息
-        userService.updateUser(dbUser);
-        // 更新用户信息表
-        WordUtil.writeUserDoc(dbUser, request);
-        return DataVO.success();
-    }
-
-    /**
-     * 普通用户
-     * 修改密码
-     */
-    @PutMapping("/passwords")
-    public DataVO editUserPwd(User user,HttpServletRequest request){
-        // 密码加密，并换掉
-        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新，并且确保是修改自己
-        String encodedPwd = UserUtil.getEncodedPwd(user.getPassword(), dbUser.getSalt());
-        user.setPassword(encodedPwd);
-        // copy过去
-        BeanUtil.copyProperties(user, dbUser,
-                true, CopyOptions.create().setIgnoreNullValue(true));
-        // update
-        userService.updateUser(dbUser);
-        // 更新用户信息表
-        WordUtil.writeUserDoc(dbUser, request);
-        return DataVO.success();
-    }
-
-    /**
-     * 普通用户
-     * 修改电话
-     */
-    @PutMapping("/phones")
-    public DataVO editUserPhone(User user, HttpServletRequest request){
-        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新，并且确保是修改自己
-        // copy过去
-        BeanUtil.copyProperties(user, dbUser,
-                true, CopyOptions.create().setIgnoreNullValue(true));
-        // update
-        userService.updateUser(dbUser);
-        // 更新用户信息表
-        WordUtil.writeUserDoc(dbUser, request);
-        return DataVO.success();
-    }
-
-    /**
-     * 普通用户
-     * 修改邮箱
-     */
-    @PutMapping("/emails")
-    public DataVO editUserEmail(User user, HttpServletRequest request){
-        User dbUser = userService.getLoginDBUser();  // 获得dbuser确保最新，并且确保是修改自己
-        // copy过去
-        BeanUtil.copyProperties(user, dbUser,
-                true, CopyOptions.create().setIgnoreNullValue(true));
-        // update
-        userService.updateUser(dbUser);
-        // 更新用户信息表
-        WordUtil.writeUserDoc(dbUser, request);
-        return DataVO.success();
-    }
 
 }

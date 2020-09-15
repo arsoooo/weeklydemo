@@ -121,7 +121,7 @@
             success: function (res) {
                 console.log(res)
                 // layer.alert(res.data);
-                if (res.code == 0) {
+                if (res.code === 0) {
                     // 收到json后给表单赋值
                     form.val("example", { //example 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
                         "title": res.data.title

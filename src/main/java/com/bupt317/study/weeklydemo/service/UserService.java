@@ -22,7 +22,7 @@ public interface UserService {
     public Integer getUserCountByNid(int nid);
     public List<UserVO> findUsersByPid(int pid);
     public List<UserVO> findOtherUsersByPid(int pid);
-    public DataVO findData();
+    public DataVO findData(String perms);
     public User getLoginDBUser();
     public Integer deleteByUid(int uid);
 

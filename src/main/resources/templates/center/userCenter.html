@@ -19,13 +19,13 @@
         <div class="layui-col-md12">
             <div class="layui-card" style=" height: 160px;">
                 <div class="user">
-                    <a href="studentEditUserImg" mytitle="修改头像" data-id="changeimg" class="changeimg">
+                    <a href="editUserImg" mytitle="修改头像" data-id="changeimg" class="changeimg">
                         <img src='' class="layui-nav-img" id="icon">
                     </a>
                 </div>
                 <div id="name">
                     <strong id="userName"></strong>
-                    <a href="studentEditUserName" mytitle="修改用户名" data-id="changeimg" class="changeimg">
+                    <a href="editUserName" mytitle="修改用户名" data-id="changeimg" class="changeimg">
                         <img id="icon2" src="img/login/bianji.png">
                     </a>
                 </div>
@@ -38,17 +38,20 @@
                 <div class="layui-tab-item layui-show">
                     <div class="layui-card">
                         <div class="layui-card-body" id="info-itme1">
+                            <div class="userContent">
+                                <strong id="other"></strong>
+                            </div>
                             <div class="username">
                                 <strong id="userPassword"></strong>
-                                <a href="studentEditUserPwd" mytitle="修改密码">修改密码</a>
+                                <a href="editUserPwd" mytitle="修改密码">修改密码</a>
                             </div>
                             <div class="usertel">
                                 <strong id="userPhone"></strong>
-                                <a href="studentEditUserPhone" mytitle="修改绑定手机号">修改绑定手机号</a>
+                                <a href="editUserPhone" mytitle="修改绑定手机号">修改绑定手机号</a>
                             </div>
-                            <div class="userem il">
+                            <div class="useremil">
                                 <strong id="userEmail"></strong>
-                                <a href="studentEditUserEmail" mytitle="修改绑定邮箱">修改绑定邮箱</a>
+                                <a href="editUserEmail" mytitle="修改绑定邮箱">修改绑定邮箱</a>
                             </div>
                         </div>
                     </div>
@@ -65,6 +68,7 @@
         // 为什么$("#userImg")用不了,有待商榷
         document.getElementById("icon").src = '[[${userImgPath}]]';
         document.getElementById("userName").innerText = '[[${userName}]]';
+        document.getElementById("other").innerText = '简介： ' + '[[${other}]]';
         document.getElementById("userPassword").innerText = '密码: *****';
         document.getElementById("userPhone").innerText = '手机号：' + '[[${userPhone}]]';
         document.getElementById("userEmail").innerText = '邮箱：' + '[[${userEmail}]]';

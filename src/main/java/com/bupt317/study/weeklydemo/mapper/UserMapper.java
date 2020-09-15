@@ -1,6 +1,7 @@
 package com.bupt317.study.weeklydemo.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -14,16 +15,21 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
     @Select("select * from user u " +
-            "left join projectmember pm " +
-            "on u.id = pm.uid " +
-            "where pm.pid = #{pid}")
-    public List<User> findUsersByPid(int pid);
+            "where perms = #{perms}")
+    public List<User> selectListByPerms(String perms);
 
     @Select("select * from user u " +
-            "where u.id not in (" +
-            "select uid from projectmember where pid = #{pid}" +
-            ")")
-    public List<User> findOtherUsersByPid(int pid);
+            "left join projectmember pm " +
+            "on u.id = pm.uid " +
+            "where pm.pid = #{pid} " +
+            "and perms = #{perms}")
+    public List<User> findUsersByPid(int pid, String perms);
+
+    @Select("select * from user u " +
+            "where u.id not in " +
+            "(select uid from projectmember where pid = #{pid})" +
+            "and perms = #{perms}")
+    public List<User> findOtherUsersByPid(int pid, String perms);
 
 
     @Select("select u.name from user u where u.id = #{id}")

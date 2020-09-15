@@ -30,64 +30,6 @@ public class StudentPageController {
     }
 
     /**
-     * 跳用户中心（有个人信息和各种修改）
-     */
-    @RequestMapping("/studentEditUser")
-    public String studentEditUser(Model model, HttpServletRequest request){
-        User user = userService.getLoginDBUser();
-        model.addAttribute("userImgPath", UserUtil.getUserImgPath(user, request));
-        model.addAttribute("userName",user.getName());
-        model.addAttribute("userPhone",user.getPhone());
-        model.addAttribute("userEmail",user.getEmail());
-        return "student/stuUserCenter";
-    }
-
-    /**
-     * 跳修改头像页面
-     */
-    @RequestMapping("/studentEditUserImg")
-    public String studentEditUserImg(Model model, HttpServletRequest request){
-        User user = userService.getLoginDBUser();
-        model.addAttribute("userImgPath", UserUtil.getUserImgPath(user, request));
-        return "student/editImg";
-    }
-
-    /**
-     * 跳修改用户名 + 简介页面
-     */
-    @RequestMapping("/studentEditUserName")
-    public String studentEditUserName(Model model, HttpServletRequest request){
-        User user = userService.getLoginDBUser();
-        model.addAttribute("userName", user.getName());
-        model.addAttribute("userOther", user.getOther());
-        return "student/editName";
-    }
-
-    /**
-     * 跳修改密码
-     */
-    @RequestMapping("/studentEditUserPwd")
-    public String studentEditUserPwd(){
-        return "student/editPwd";
-    }
-
-    /**
-     * 跳修改用户手机页面
-     */
-    @RequestMapping("/studentEditUserPhone")
-    public String studentEditUserPhone(){
-        return "student/editPhone";
-    }
-
-    /**
-     * 跳修改用户邮箱页面
-     */
-    @RequestMapping("/studentEditUserEmail")
-    public String studentEditUserEmail(){
-        return "student/editEmail";
-    }
-
-    /**
      * 跳显示用户公告页面
      */
     @RequestMapping("/studentListNotice")

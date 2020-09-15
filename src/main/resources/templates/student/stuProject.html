@@ -47,8 +47,7 @@
             var data = obj.data;  // 获取选中行的信息
             if (event === "see") {
                 // 跳转至编辑项目
-                var url = "studentEditProject?pid=" + data.id;
-                location.href = url;
+                location.href = "studentEditProject?pid=" + data.id;
 
             } else if (event === "delete") {
                 layer.confirm('是否要删除？', {

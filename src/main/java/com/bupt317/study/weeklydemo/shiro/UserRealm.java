@@ -53,13 +53,12 @@ public class UserRealm extends AuthorizingRealm {
             // 用户名不存在
             return null;  // UnknownAccountException
         }
-
         // 盐值转换
         ByteSource salt = ByteSource.Util.bytes(dbUser.getSalt());
-
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(dbUser, dbUser.getPassword(), salt, "");
         // 2.判断密码，参数放入数据库查到的密码
         // 由于已经在Config里配置了凭证匹配器，这里直接加数据库的pwd、加salt进去判断，自动对输入的pwd加密对比
-        return new SimpleAuthenticationInfo(dbUser, dbUser.getPassword(), salt, "");
+        return authenticationInfo;
 
     }
 }

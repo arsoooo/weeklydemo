@@ -13,10 +13,10 @@
 
 
 <script type="text/html" id="toolbar">
-    <div class="layui-btn layui-btn-sm" lay-event="see">查看</div>
+    <div class="layui-btn layui-btn-sm" lay-event="see">编辑</div>
     <div class="layui-btn layui-btn-sm" lay-event="downloadFile"
          href="javascript:void(0);">下载</div>
-    <div class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</div>
+<!--    <div class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</div>-->
 </script>
 <script>
 
@@ -64,31 +64,33 @@
                 // 下载信息表
                 window.location = "doc/report/" + data.id + ".doc";
 
-            } else if (event === "delete"){
-                layer.confirm('是否要删除？(会删除相关信息、周报上传文件和信息表)', {
-                    btn: ['确定','取消'] //按钮
-                }, function () {
-                    // 进行删除
-                    $.ajax({
-                        url: "reports/" + data.id,
-                        type: "delete",
-                        data: null,
-                        dataType: "json",
-                        success: function (res) {
-                            if (res.code === 0) {
-                                layer.msg("已删除"+res.data+"条数据！");
-                                setTimeout(function () {
-                                    //如果输入成功，可以跳到另一个你需要的界面
-                                    location.href = "studentListReport";
-                                }, 1000)
-                            }else {
-                                layer.msg(res.msg);
-                            }
-                        }
-                    });
-                }, function () {
-                });
             }
+            /*注释了删除功能2020/9/12*/
+            // else if (event === "delete"){
+            //     layer.confirm('是否要删除？(会删除相关信息、周报上传文件和信息表)', {
+            //         btn: ['确定','取消'] //按钮
+            //     }, function () {
+            //         // 进行删除
+            //         $.ajax({
+            //             url: "reports/" + data.id,
+            //             type: "delete",
+            //             data: null,
+            //             dataType: "json",
+            //             success: function (res) {
+            //                 if (res.code === 0) {
+            //                     layer.msg("已删除"+res.data+"条数据！");
+            //                     setTimeout(function () {
+            //                         //如果输入成功，可以跳到另一个你需要的界面
+            //                         location.href = "studentListReport";
+            //                     }, 1000)
+            //                 }else {
+            //                     layer.msg(res.msg);
+            //                 }
+            //             }
+            //         });
+            //     }, function () {
+            //     });
+            // }
         })
     })
 </script>

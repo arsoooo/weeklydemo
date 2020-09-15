@@ -2,6 +2,7 @@ package com.bupt317.study.weeklydemo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.mapper.UserMapper;
@@ -76,7 +77,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String findUserNamesByPid(int pid) {
-        List<User> userList = userMapper.findUsersByPid(pid);
+        List<User> userList = userMapper.findUsersByPid(pid, StaticParams.USER_PERMS);
         // 按格式把名字列出来
         StringBuilder names = new StringBuilder();
         for (User user : userList) {
@@ -115,7 +116,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserVO> findUsersByPid(int pid) {
         List<UserVO> userVOList =  new ArrayList<>();
-        for (User user : userMapper.findUsersByPid(pid)) {
+        for (User user : userMapper.findUsersByPid(pid, StaticParams.USER_PERMS)) {
             userVOList.add(new UserVO(user.getId(), user.getName()));
         }
         return userVOList;
@@ -124,18 +125,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserVO> findOtherUsersByPid(int pid) {
         List<UserVO> userVOList =  new ArrayList<>();
-        for (User user : userMapper.findOtherUsersByPid(pid)) {
+        for (User user : userMapper.findOtherUsersByPid(pid, StaticParams.USER_PERMS)) {
             userVOList.add(new UserVO(user.getId(), user.getName()));
         }
         return userVOList;
     }
 
+    /**
+     * perms null则全部,否则只查特定perms的用户
+     */
     @Override
-    public DataVO findData() {
+    public DataVO findData(String perms) {
         DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE,null);
         dataVO.setCount(userMapper.selectCount(null));
         // userList -> userVOList
-        List<User> userList = userMapper.selectList(null);
+        List<User> userList = null;
+        if(perms==null){
+            userList = userMapper.selectList(null);
+        }else {
+            userList = userMapper.selectListByPerms(perms);
+        }
         List<UserVO> userVOList =  new ArrayList<>();
         for (User user : userList) {
             // 使用util工具直接复制属性

@@ -151,6 +151,34 @@ public class ReportController {
 
     /**
      * 普通用户
+     * 对周报修改（修改标题、内容）
+     * 已经点评过则无法修改
+     */
+    @PutMapping("/reports/{rid}")
+    public DataVO updateUserReportByRid(
+            @PathVariable("rid") int rid,
+            Report report,
+            HttpServletRequest request
+    ){
+        // 获得dbReport
+        Report dbReport = reportService.getById(rid);
+        // 如果已经有评价就不能改了
+        if (dbReport.getStatus().equals(StaticParams.REPORT_FINISHED)){
+            return DataVO.fail("该周报已有教师评价，无法更改");
+        }
+        // report -> dbReport
+        BeanUtil.copyProperties(report, dbReport,
+                true, CopyOptions.create().setIgnoreNullValue(true));
+        // 更新数据库（dbReport）
+        reportService.updateReport(dbReport);
+        // 修改周报表（以另一种形式保存到report）
+        WordUtil.writeReportDoc(dbReport, userService.getById(dbReport.getUid()), request);
+
+        return DataVO.success();
+    }
+
+    /**
+     * 普通用户
      * 删除某个周报（与管理员不同，要验证用户是否有该周报）
      */
     @DeleteMapping("/reports/{rid}")
