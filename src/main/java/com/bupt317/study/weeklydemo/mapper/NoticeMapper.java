@@ -2,6 +2,7 @@ package com.bupt317.study.weeklydemo.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bupt317.study.weeklydemo.pojo.Notice;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -23,6 +24,6 @@ public interface NoticeMapper extends BaseMapper<Notice> {
             "left join noticemember nm " +
             "on n.id = nm.nid " +
             "where uid = #{uid}")
-    public List<Notice> findNoticeByUid(int uid);
+    public IPage<Notice> findNoticeByUid(int uid, IPage<Notice> iPage);
 
 }

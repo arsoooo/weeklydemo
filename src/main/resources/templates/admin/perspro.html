@@ -11,6 +11,20 @@
 
 <div id="tableData" lay-filter="tableData"></div>
 
+<script type="text/html" id="state">
+
+    {{# if(d.projectState == "进行中"){ }}
+    <p style="color: green;">进行中</p>
+    {{#  } }}
+
+    {{# if(d.projectState == "已结项"){ }}
+    <p style="color: red;">已结项</p>
+    {{#  } }}
+
+    {{# if(d.projectState == "延期"){ }}
+    <p style="color: darkblue;">延期</p>
+    {{#  } }}
+</script>
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn layui-btn-sm" lay-event="see">查看</div>
@@ -44,11 +58,12 @@
                     {field: 'projectTimeStr', title: '项目用时', width: "22%"},
                     {field: 'deadlineTimeStr', title: '计划结束日期', width: "10%"},
                     {field: 'finishTimeStr', title: '结束日期', width: "10%"},
-                    {field: 'projectState', title: '状态', width: "8%"},
+                    {title: '状态', width: "8%", sort: true, templet:"#state"},
                     {field: 'names', title: '成员', width: "14%"},
                     {fixed: 'right', title: '操作', width: "15%", align: 'center', toolbar: '#toolbar'}
                 ]
             ]
+            ,page: true
         })
 
         table.on("tool(tableData)", function (obj) {

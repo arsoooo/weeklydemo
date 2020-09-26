@@ -55,8 +55,9 @@
                 if (res.code === 0) {
                     layer.msg('成功！刷新后生效！');
                     setTimeout(function () {
+                        parent.window.tabFun("上传周报", "查看个人周报", 'studentListReport');
                         //跳用户查看所有周报的界面
-                        location.href = "studentListReport";
+                        // location.href = "studentListReport";
                     }, 1000)
                 } else {
                     layer.msg(res.msg);

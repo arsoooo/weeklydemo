@@ -6,8 +6,8 @@ import com.bupt317.study.weeklydemo.vo.ProjectVO;
 
 public interface ProjectService {
 
-    public DataVO findData();
-    public DataVO findDataByUid(int uid);
+    public DataVO findData(Integer page, Integer limit);
+    public DataVO findDataByUid(int uid, Integer page, Integer limit);
     public Project getProjectByPid(int pid);
     public ProjectVO getProjectVOByPid(int pid);
     public int addProject(Project project);

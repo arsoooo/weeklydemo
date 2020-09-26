@@ -7,6 +7,7 @@ public class UserVO {
     private String email;
     private String phone;
     private String other;
+    private String target;
 
     public UserVO() {
     }
@@ -20,10 +21,10 @@ public class UserVO {
         this.name = name;
     }
 
-    public UserVO(Integer id, String name, String permStr) {
+    public UserVO(Integer id, String name, String target) {
         this.id = id;
         this.name = name;
-        this.permStr = permStr;
+        this.target = target;
     }
 
     @Override
@@ -35,6 +36,7 @@ public class UserVO {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", other='" + other + '\'' +
+                ", target='" + target + '\'' +
                 '}';
     }
 
@@ -84,5 +86,13 @@ public class UserVO {
 
     public void setOther(String other) {
         this.other = other;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 }

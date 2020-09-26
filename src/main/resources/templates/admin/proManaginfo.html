@@ -35,6 +35,13 @@
 
         <div class="layui-form-item">
             <div class="layui-inline" style="width: 310px">
+                <label class="layui-form-label">人员分工</label>
+                <div class="layui-input-block">
+                    <table class="layui-hide" id="editMember" lay-filter="editMember"></table>
+                </div>
+
+                <br>
+
                 <label class="layui-form-label">增加人员</label>
                 <div class="layui-input-block">
                     <table class="layui-hide" id="addMember"></table>
@@ -52,7 +59,7 @@
             <div class="layui-input-block">
                 <input type="radio" name="statusStr" value="进行中" title="进行中">
                 <input type="radio" name="statusStr" value="已结项" title="已结项">
-
+                <input type="radio" name="statusStr" value="延期" title="延期">
             </div>
         </div>
 
@@ -73,6 +80,23 @@
 
     layui.use('table', function () {
         var table = layui.table;
+
+        /*编辑人员分工表*/
+        table.render({
+            elem: '#editMember'
+            , id: 'delUserTable'
+            , width: 780
+            , url: 'users/products/del/' + pid // url找到处理谁
+            , method: 'get' // method找到CRUD方法
+            , cols: [
+                [
+                    {field: 'id', title: 'ID', width: 200, fixed: 'left', unresize: true, sort: true}
+                    , {field: 'name', title: '用户名', width: 230} // edit: 'text'会导致可直接编辑
+                    , {field: 'target', title: '分工明细', width: 350, edit: 'text'}
+                ]
+            ]
+        });
+
         /*增加人员表*/
         table.render({
             elem: '#addMember'
@@ -103,12 +127,39 @@
                 ]
             ]
         });
+
+        //监听分工表格的文本编辑
+        table.on('edit(editMember)', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            // layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
+            $.ajax({
+                url: 'projectMembers/' + pid,
+                type: 'put',
+                dataType: 'json',
+                data: {
+                    uid: data.id,
+                    target: value,
+                    fieldName: field
+                },
+                success: function (res) {
+                    if (res.code === 0) {
+                        layer.msg(field + "修改完成", {icon: 1})
+                    } else {
+                        layer.msg(res.msg)
+                    }
+                }
+            })
+        });
     });
+
+
 </script>
 
-<!--监听提交，获取内容，跳转-->
 <script>
-    //Demo
+
+    <!--监听提交,获取内容,跳转-->
     layui.use('form', function () {
         // 定义form
         var form = layui.form;
@@ -129,10 +180,7 @@
                         ,"content": res.data.content
                         ,"statusStr": res.data.projectState
                     });
-
-
                 }
-
             }
         })
 
@@ -150,6 +198,7 @@
             // var data = form.val('example');
             // layer.alert(data);
             // layer.alert($('input[name=statusStr]:checked').val())
+
             $.ajax({
                 url: 'projects/' + pid,
                 type: 'put',
@@ -170,7 +219,7 @@
                     });
                 },
                 success: function (res) {
-                    if (res.code == 0) {
+                    if (res.code === 0) {
                         //res.code == 0,表示用户输入成功，1表示失败
                         //获取用户输入的内容，存到本地存储，采用sessionStorage是因为用户只需输入一次，不需要保存，用户的体验感较好，也比较安全
                         layer.msg("添加完成", {icon: 1})
@@ -196,21 +245,6 @@
         });
     });
 </script>
-
-<script>
-    //Demo
-    layui.use('form', function () {
-        var form = layui.form;
-
-        //监听提交
-        form.on('submit(formDemo)', function (data) {
-            layer.msg(JSON.stringify(data.field));
-            return false;
-        });
-    });
-</script>
-
-
 
 <script>
     <!--日期选择器所需-->

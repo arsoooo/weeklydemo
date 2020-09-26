@@ -70,9 +70,8 @@ public class UserUtil {
      */
     public static User getLoginUser(){
         Subject subject = SecurityUtils.getSubject();
-        // 这里loginUser是登陆时候的用户信息, 真正获得用户得用dbUser
-        User loginUser = (User)subject.getPrincipal();
-        return loginUser;
+        // 这里return的是登陆时候的用户信息, 真正获得用户要用dbUser
+        return (User)subject.getPrincipal();
     }
 
     /**

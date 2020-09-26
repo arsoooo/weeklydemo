@@ -2,6 +2,8 @@ package com.bupt317.study.weeklydemo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.mapper.ProjectMapper;
 import com.bupt317.study.weeklydemo.pojo.Project;
@@ -34,18 +36,24 @@ public class ProjectServiceImpl implements ProjectService {
      * 查询全部项目
      */
     @Override
-    public DataVO findData() {
+    public DataVO findData(Integer page, Integer limit) {
         QueryWrapper<Project> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("id");
-        return findDataByWrapper(wrapper);
+        return findDataByWrapper(page, limit, wrapper);
     }
 
     // 分离出来不一定有用，可能还得整合到findDATA里去
-    private DataVO findDataByWrapper(QueryWrapper<Project> wrapper){
+    private DataVO findDataByWrapper(Integer page, Integer limit, QueryWrapper<Project> wrapper){
         DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE,null);
-        dataVO.setCount(projectMapper.selectCount(null));
-        // projectList -> projectVOList
-        List<Project> projectList = projectMapper.selectList(wrapper);
+
+        // projectList -> projectVOList 加入分页
+        IPage<Project> projectIPage = new Page<>(page, limit);
+        IPage<Project> result = projectMapper.selectPage(projectIPage, wrapper);
+        List<Project> projectList = result.getRecords(); // 这里records就是分页后的内容了
+        dataVO.setCount(result.getTotal()); // count也不需要查询了，在result里
+//        List<Project> projectList = projectMapper.selectPage(projectIPage, wrapper);
+//        dataVO.setCount(projectMapper.selectCount(null));
+
         List<ProjectVO> projectVOList = new ArrayList<>();
         for (Project project : projectList) {
             // 添加到list里去
@@ -59,14 +67,16 @@ public class ProjectServiceImpl implements ProjectService {
      * 获得某用户的所有项目
      */
     @Override
-    public DataVO findDataByUid(int uid) {
+    public DataVO findDataByUid(int uid, Integer page, Integer limit) {
         // 根据uid 获得这个user的所有project实体类
-        List<Project> projectList = projectMapper.findProjectsByUid(uid);
+        IPage<Project> projectIPage = new Page<>(page, limit);
+        IPage<Project> result = projectMapper.findProjectsByUid(uid, projectIPage);
         // 准备DataVO
         DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE);
-        dataVO.setCount(projectList.size());
+        dataVO.setCount(result.getTotal());
         // 准备dataVO.data
         List<ProjectVO> projectVOList = new ArrayList<>();
+        List<Project> projectList = result.getRecords(); // 这里records就是分页后的内容了
         for (Project project : projectList) {
             projectVOList.add(pro2proVO(project,true));
         }

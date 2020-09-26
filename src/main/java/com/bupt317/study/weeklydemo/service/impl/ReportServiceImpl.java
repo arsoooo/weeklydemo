@@ -2,6 +2,8 @@ package com.bupt317.study.weeklydemo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.mapper.ReportMapper;
 import com.bupt317.study.weeklydemo.pojo.Project;
@@ -15,6 +17,7 @@ import com.bupt317.study.weeklydemo.vo.ReportVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +35,16 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public DataVO findData() {
+    public DataVO findData(Integer page, Integer limit) {
         DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE,null);
-        dataVO.setCount(reportMapper.selectCount(null));
+        IPage<Report> reportIPage = new Page<>(page, limit);
+        IPage<Report> result = reportMapper.selectPage(reportIPage, new QueryWrapper<Report>().orderByDesc("id"));
+        dataVO.setCount(result.getTotal());
+//        dataVO.setCount(reportMapper.selectCount(null));
         // reportList -> reportVOList
-        List<Report> reportList = reportMapper.selectList(
-                new QueryWrapper<Report>().orderByDesc("id"));
+        List<Report> reportList = result.getRecords();
+//        List<Report> reportList = reportMapper.selectList(
+//                new QueryWrapper<Report>().orderByDesc("id"));
         List<ReportVO> reportVOList = new ArrayList<>();
         for (Report report : reportList) {
             reportVOList.add(report2VO(report));
@@ -47,13 +54,19 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public DataVO findDataByUid(int uid) {
+    public DataVO findDataByUid(int uid, Integer page, Integer limit) {
+        DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE);
+        IPage<Report> reportIPage = new Page<>(page, limit);
+        IPage<Report> result = reportMapper.selectPage(reportIPage, new QueryWrapper<Report>().eq("uid", uid));
         List<ReportVO> reportVOList = new ArrayList<>();
-        List<Report> reportList = reportMapper.selectList(new QueryWrapper<Report>().eq("uid", uid));
+        dataVO.setCount(result.getTotal());
+        List<Report> reportList = result.getRecords();
+//        List<Report> reportList = reportMapper.selectList(new QueryWrapper<Report>().eq("uid", uid));
         for (Report report : reportList) {
             reportVOList.add(report2VO(report));
         }
-        return DataVO.success(reportVOList);
+        dataVO.setData(reportVOList);
+        return dataVO;
     }
 
     @Override

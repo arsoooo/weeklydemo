@@ -13,6 +13,7 @@ public class Projectmember {
 
     private Integer pid;
     private Integer uid;
+    private String target;
 
 
 
@@ -24,12 +25,19 @@ public class Projectmember {
         this.uid = uid;
     }
 
+    public Projectmember(Integer pid, Integer uid, String target) {
+        this.pid = pid;
+        this.uid = uid;
+        this.target = target;
+    }
+
     @Override
     public String toString() {
         return "Projectmember{" +
                 "id=" + id +
                 ", pid=" + pid +
                 ", uid=" + uid +
+                ", target='" + target + '\'' +
                 '}';
     }
 
@@ -55,5 +63,13 @@ public class Projectmember {
 
     public void setUid(Integer uid) {
         this.uid = uid;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 }

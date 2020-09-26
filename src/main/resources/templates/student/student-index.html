@@ -76,12 +76,12 @@
         <!--tabs标签-->
         <div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true">
             <ul class="layui-tab-title">
-                <!-- <li class="layui-this" lay-id=""><i class="layui-icon">&#xe68e;</i> <cite>后台首页</cite></li>-->
+                <li class="layui-this" lay-id="个人信息">个人信息</li>
             </ul>
             <div class="layui-tab-content">
-                <!-- <div class="layui-tab-item layui-show">
-                          <iframe style='width: 100%;margin-top:0px;border:none;' height='550' src='setting/usercenter.php' ></iframe>
-                      </div>-->
+                <div class="layui-tab-item layui-show">
+                    <iframe style='width: 100%;margin-top:0px;border:none;' height='550' src='editUser' ></iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -109,12 +109,63 @@
         }
     })
 
+
+
     //添加事件执行
     layui.use(['jquery', 'element', 'upload'], function () {
         let $ = layui.jquery
             , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
         let upload = layui.upload;
         console.log(upload)
+
+        /*
+        * tabFun:
+        * 1.关闭oldTab
+        * 2.关闭newTab
+        * 3.新建newTab（tabUrl是后端的调用接口）
+        * 4.切换到newTab
+        * */
+        window.tabFun = function(oldTab, newTab, tabUrl){
+            element.tabDelete("demo", oldTab);
+            element.tabDelete("demo", newTab);
+            var h = $(window).height() - 150;
+            element.tabAdd('demo', {
+                title: newTab //用于演
+                ,
+                content: '<iframe style="width: 100%;height:' + h + 'px;margin-top:0px;border:none;" scrolling="auto" src=' + tabUrl + ' ></iframe>'
+                ,
+                id: newTab //实际使用一般是规定好的id，这里以时间戳模拟下
+            })
+            element.tabChange("demo", newTab);
+        }
+
+        // 切换tab同时选中对应侧边栏
+        element.on('tab(demo)', function(data){
+            let layId = $(this).attr("lay-id");
+            //获取属性包含“tabs”的元素将其全部隐藏
+            let tabs = document.getElementsByName('tabs');
+            $(tabs).hide();
+            //移除被选中样式
+            let dds = document.querySelectorAll("dd");
+            $(dds).each(function () {
+                $(this).removeClass("layui-this")
+            })
+
+            $(tabs).each(function () {
+                let _this = this;
+                let ddItems = this.querySelectorAll("dd")
+                if(ddItems.length !== 0){
+                    $(ddItems).each(function () {
+                        let title = $(this).attr("mytitle")
+                        if(title === layId){
+                            $(_this).show();
+                            $(this).addClass("layui-this")
+                        }
+                    })
+                }
+            })
+        });
+
         //触发事件
         var active = {
             offset: function (othis) {

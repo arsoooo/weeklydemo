@@ -52,7 +52,8 @@ public class userController {
             User user
     ){
         DataVO result = login(user);
-        User dbUser = userService.getLoginDBUser();
+//        User dbUser = userService.getLoginDBUser();
+        User dbUser = UserUtil.getLoginUser();
         // 如果学生以教师身份登录，则返回错误
         if(StaticParams.USER_PERMS.equals(dbUser.getPerms())){
             return DataVO.fail("该用户为学生，请以学生身份登录！");
@@ -69,7 +70,9 @@ public class userController {
             User user
     ){
         DataVO result = login(user);
-        User dbUser = userService.getLoginDBUser();
+
+//        User dbUser = userService.getLoginDBUser();
+        User dbUser = UserUtil.getLoginUser();
         // 如果教师以学生身份登录，则返回错误
         if(StaticParams.ADMIN_PERMS.equals(dbUser.getPerms())){
             return DataVO.fail("该用户为管理员，请以教师身份登录！");

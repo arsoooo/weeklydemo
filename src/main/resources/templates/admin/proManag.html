@@ -11,6 +11,20 @@
 
 <div id="tableData" lay-filter="tableData"></div>
 
+<script type="text/html" id="state">
+
+    {{# if(d.projectState == "进行中"){ }}
+    <p style="color: green;">进行中</p>
+    {{#  } }}
+
+    {{# if(d.projectState == "已结项"){ }}
+    <p style="color: red;">已结项</p>
+    {{#  } }}
+
+    {{# if(d.projectState == "延期"){ }}
+    <p style="color: darkblue;">延期</p>
+    {{#  } }}
+</script>
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn layui-btn-sm" lay-event="see">编辑</div>
@@ -25,7 +39,7 @@
         table.render({
             elem: "#tableData",
             url: "admin/projects",
-            method:"get",
+            method: "get",
             cols: [
                 [
                     {field: 'id', title: 'ID', width: "6%", sort: true},
@@ -33,12 +47,13 @@
                     {field: 'projectTimeStr', title: '项目用时', width: "22%", sort: true},
                     {field: 'deadlineTimeStr', title: '计划结束日期', width: "10%", sort: true},
                     {field: 'finishTimeStr', title: '结束日期', width: "10%", sort: true},
-                    {field: 'projectState', title: '状态', width: "8%", sort: true},
+                    {title: '状态', width: "8%", sort: true, templet: "#state"},
                     {field: 'names', title: '成员', width: "14%", sort: true},
                     {fixed: 'right', title: '操作', width: "15%", align: 'center', toolbar: '#toolbar'}
 
                 ]
             ]
+            , page: true
         })
 
         table.on("tool(tableData)", function (obj) {
@@ -63,12 +78,12 @@
                         dataType: "json",
                         success: function (res) {
                             if (res.code === 0) {
-                                layer.msg("已删除"+res.data+"条数据！");
+                                layer.msg("已删除" + res.data + "条数据！");
                                 setTimeout(function () {
                                     //如果输入成功，可以跳到另一个你需要的界面
                                     location.href = "adminListProject";
                                 }, 1000)
-                            }else {
+                            } else {
                                 layer.msg(res.msg);
                             }
                         }

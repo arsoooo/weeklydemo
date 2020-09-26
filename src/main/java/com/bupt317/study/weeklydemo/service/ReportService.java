@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface ReportService {
     public Integer addReport(Report report);
-    public DataVO findData();
-    public DataVO findDataByUid(int uid);
+    public DataVO findData(Integer page, Integer limit);
+    public DataVO findDataByUid(int uid, Integer page, Integer limit);
     public List<Integer> findRidByUid(int uid);
     public Report getById(int id);
     public ReportVO getReportVOById(int id);

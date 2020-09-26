@@ -1,6 +1,9 @@
 package com.bupt317.study.weeklydemo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.mapper.NoticeMapper;
 import com.bupt317.study.weeklydemo.pojo.Notice;
@@ -29,23 +32,34 @@ public class NoticeServiceImpl implements NoticeService {
     private NoticememeberService noticememeberService;
 
     @Override
-    public DataVO findData() {
+    public DataVO findData(Integer page, Integer limit) {
+        DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE,null);
         List<NoticeVO> noticeVOList = new ArrayList<>();
-        List<Notice> noticeList = noticeMapper.selectList(null);
+
+        IPage<Notice> noticeIPage = new Page<>(page, limit);
+        IPage<Notice> result = noticeMapper.selectPage(noticeIPage, new QueryWrapper<Notice>().orderByDesc("id"));
+        List<Notice> noticeList = result.getRecords();
+        dataVO.setCount(result.getTotal());
         for (Notice notice : noticeList) {
             noticeVOList.add(adminNotice2VO(notice));
         }
-        return DataVO.success(noticeVOList);
+        dataVO.setData(noticeVOList);
+        return dataVO;
     }
 
     @Override
-    public DataVO findDataByUid(int uid) {
+    public DataVO findDataByUid(int uid, Integer page, Integer limit) {
+        DataVO dataVO = new DataVO(StaticParams.SUCCESS_CODE);
+        IPage<Notice> noticeIPage = new Page<>(page, limit);
+        IPage<Notice> result = noticeMapper.findNoticeByUid(uid, noticeIPage);
+        dataVO.setCount(result.getTotal());
         List<NoticeVO> noticeVOList = new ArrayList<>();
-        List<Notice> noticeList = noticeMapper.findNoticeByUid(uid);
+        List<Notice> noticeList = result.getRecords();  // 现在已经是分页后的内容
         for (Notice notice : noticeList) {
             noticeVOList.add(userNotice2VO(notice, uid));
         }
-        return DataVO.success(noticeVOList);
+        dataVO.setData(noticeVOList);
+        return dataVO;
     }
 
     @Override

@@ -24,6 +24,7 @@ public class StaticParams {
      */
     public static final String PRJ_CREATED = "created";
     public static final String PRJ_FINISHED = "finish";
+    public static final String PRJ_DELAY = "delay";
 
     /**
      * perms权限

@@ -17,6 +17,9 @@ public class ProjectUtil {
             case StaticParams.PRJ_FINISHED:
                 desc="已结项";
                 break;
+            case StaticParams.PRJ_DELAY:
+                desc="延期";
+                break;
             default:
                 desc="未知";
         }
@@ -35,6 +38,9 @@ public class ProjectUtil {
                 break;
             case "已结项":
                 status=StaticParams.PRJ_FINISHED;
+                break;
+            case "延期":
+                status=StaticParams.PRJ_DELAY;
                 break;
             default:
                 status="未知";

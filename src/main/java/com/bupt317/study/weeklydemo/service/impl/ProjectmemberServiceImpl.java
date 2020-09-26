@@ -31,6 +31,16 @@ public class ProjectmemberServiceImpl implements ProjectmemberService {
     }
 
     @Override
+    public Projectmember getByPidAndUid(int pid, int uid) {
+        return projectmemberMapper.getByPidAndUid(pid, uid);
+    }
+
+    @Override
+    public int updateProjectMember(Projectmember projectmember) {
+        return projectmemberMapper.updateById(projectmember);
+    }
+
+    @Override
     public int addProjectmember(Projectmember projectmember) {
         return projectmemberMapper.insert(projectmember);
     }

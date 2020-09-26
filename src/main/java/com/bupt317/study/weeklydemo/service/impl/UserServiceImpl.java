@@ -2,11 +2,9 @@ package com.bupt317.study.weeklydemo.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.alibaba.druid.support.spring.stat.annotation.Stat;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bupt317.study.weeklydemo.config.StaticParams;
 import com.bupt317.study.weeklydemo.mapper.UserMapper;
-import com.bupt317.study.weeklydemo.pojo.Projectmember;
 import com.bupt317.study.weeklydemo.pojo.User;
 import com.bupt317.study.weeklydemo.service.UserService;
 import com.bupt317.study.weeklydemo.util.UserUtil;
@@ -77,18 +75,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String findUserNamesByPid(int pid) {
-        List<User> userList = userMapper.findUsersByPid(pid, StaticParams.USER_PERMS);
-        // 按格式把名字列出来
+        List<UserVO> userVOList = userMapper.findUsersByPid(pid, StaticParams.USER_PERMS);
+//        // 按格式把名字列出来
         StringBuilder names = new StringBuilder();
-        for (User user : userList) {
-            names.append(user.getName()).append(" ");
+        for (UserVO userVO : userVOList) {
+            names.append(userVO.getName()).append(" ");
         }
         return names.toString();
     }
 
     @Override
     public String findUserNamesByNoticeStatusAndNid(int nid, String status) {
-        List<String> stringList = userMapper.fineUserNamesByNoticeStatusAndNid(nid, status);
+        List<String> stringList = userMapper.findUserNamesByNoticeStatusAndNid(nid, status);
         // 按格式把名字列出来
         StringBuilder names = new StringBuilder();
         for (String s : stringList) {
@@ -99,7 +97,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String findUserNamesByNid(int nid) {
-        List<String> stringList = userMapper.fineUserNamesByNid(nid);
+        List<String> stringList = userMapper.findUserNamesByNid(nid);
         // 按格式把名字列出来
         StringBuilder names = new StringBuilder();
         for (String s : stringList) {
@@ -115,20 +113,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserVO> findUsersByPid(int pid) {
-        List<UserVO> userVOList =  new ArrayList<>();
-        for (User user : userMapper.findUsersByPid(pid, StaticParams.USER_PERMS)) {
-            userVOList.add(new UserVO(user.getId(), user.getName()));
-        }
-        return userVOList;
+        return userMapper.findUsersByPid(pid, StaticParams.USER_PERMS);
     }
 
     @Override
     public List<UserVO> findOtherUsersByPid(int pid) {
-        List<UserVO> userVOList =  new ArrayList<>();
-        for (User user : userMapper.findOtherUsersByPid(pid, StaticParams.USER_PERMS)) {
-            userVOList.add(new UserVO(user.getId(), user.getName()));
-        }
-        return userVOList;
+        return userMapper.findOtherUsersByPid(pid, StaticParams.USER_PERMS);
     }
 
     /**

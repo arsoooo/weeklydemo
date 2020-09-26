@@ -20,14 +20,15 @@
         <div class="layui-logo">实验室网站</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item showtab layui-this" data-id="staffs" mytitle="人员管理"><a>人员管理</a></li>
+            <li class="layui-nav-item showtab" data-id="staffs" mytitle="人员管理"><a>人员管理</a></li>
             <li class="layui-nav-item showtab" data-id="projects" mytitle="项目管理"><a>项目管理</a></li>
             <li class="layui-nav-item showtab" data-id="publications" mytitle="周报管理"><a>周报管理</a></li>
             <li class="layui-nav-item showtab" data-id="notices" mytitle="公告栏"><a>公告栏</a></li>
+            <li class="layui-nav-item showtab layui-this" data-id="user" mytitle="个人中心"><a>个人中心</a></li>
         </ul>
-        <ul class="layui-nav layui-layout-right" >
-            <li class="layui-nav-item" id="usericon" mytitle="管理员个人信息">
-                <a href="editUser" target="body-frame">
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-this" >
+                <a id="userInfo" data-url="editUser" mytitle="个人信息">
                     <img src='' class="layui-nav-img" id="userImg">
                     <strong id="userName"></strong>
                 </a>
@@ -43,32 +44,39 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed" id="staffs" name="tabs">
+                <li class="layui-nav-item layui-nav-itemed" id="staffs" name="tabs" style="display:none;">
                     <a href="javascript:;">人员管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="adminListUser" target="body-frame">查看人员</a></dd>
+                        <dd class="leftdaohang" data-url="adminListUser" mytitle="查看人员" ><a>查看人员</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed" id="projects" name="tabs" style="display:none;">
                     <a href="javascript:;">项目管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="adminListProject" target="body-frame">查看项目</a></dd>
-                        <dd><a href="adminAddProject" target="body-frame">增加项目</a></dd>
+                        <dd class="leftdaohang" data-url="adminListProject" mytitle="查看项目"><a>查看项目</a>
+                        </dd>
+                        <dd class="leftdaohang" data-url="adminAddProject" mytitle="增加项目"><a>增加项目</a></dd>
                     </dl>
                 </li>
-                <li class="layui-nav-item  layui-nav-itemed" id="publications" name="tabs" style="display:none;">
+                <li class="layui-nav-item  layui-nav-itemed" id="publications" mytitle="查看人员" name="tabs"
+                    style="display:none;">
                     <a href="javascript:;">周报管理</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="adminListReport" target="body-frame">查看周报</a></dd>
+                        <dd class="leftdaohang" data-url="adminListReport" mytitle="查看周报"><a>查看周报</a></dd>
                     </dl>
+                </li>
                 <li class="layui-nav-item  layui-nav-itemed" id="notices" name="tabs" style="display:none;">
                     <a href="javascript:;">公告栏</a>
                     <dl class="layui-nav-child">
-
-                        <dd><a href="adminListNotice" target="body-frame">查看公告</a></dd>
-                        <dd><a href="adminAddNotice" target="body-frame">新增公告</a></dd>
+                        <dd class="leftdaohang" data-url="adminListNotice" mytitle="查看公告"><a>查看公告</a></dd>
+                        <dd class="leftdaohang" data-url="adminAddNotice" mytitle="新增公告"><a>新增公告</a></dd>
                     </dl>
                 </li>
+                <li class="layui-nav-item  layui-nav-itemed" id="user" name="tabs">
+                    <a href="javascript:;">个人中心</a>
+                    <dl class="layui-nav-child">
+                        <dd class="leftdaohang layui-this" data-url="editUser" mytitle="个人信息"><a>个人信息</a></dd>
+                    </dl>
                 </li>
             </ul>
         </div>
@@ -77,15 +85,14 @@
     <div class="layui-body" style="margin-bottom:-50px;">
         <!--tabs标签-->
         <div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true">
-            <iframe src="https://www.baidu.com/" name="body-frame" id="demoAdmin" style="width: 100%; height: 600px;" frameborder="0"></iframe>
-
+            <!--            <iframe src="https://www.baidu.com/" name="body-frame" id="demoAdmin" style="width: 100%; height: 600px;" frameborder="0"></iframe>-->
             <ul class="layui-tab-title">
-                <!-- <li class="layui-this" lay-id=""><i class="layui-icon">&#xe68e;</i> <cite>后台首页</cite></li>-->
+                <li class="layui-this" lay-id="个人信息">个人信息</li>
             </ul>
             <div class="layui-tab-content">
-                <!-- <div class="layui-tab-item layui-show">
-                          <iframe style='width: 100%;margin-top:0px;border:none;' height='550' src='setting/usercenter.php' ></iframe>
-                      </div>-->
+                <div class="layui-tab-item layui-show">
+                    <iframe style='width: 100%;margin-top:0px;border:none;' height='550' src='editUser' ></iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -116,56 +123,107 @@
 
 
     //添加事件执行
-    layui.use('element', function(){
+    layui.use('element', function () {
         var $ = layui.jquery
-            ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+            , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+
+        /*
+        * tabFun:
+        * 1.关闭oldTab
+        * 2.关闭newTab
+        * 3.新建newTab（tabUrl是后端的调用接口）
+        * 4.切换到newTab
+        * */
+        window.tabFun = function(oldTab, newTab, tabUrl){
+            element.tabDelete("demo", oldTab);
+            element.tabDelete("demo", newTab);
+            var h = $(window).height() - 150;
+            element.tabAdd('demo', {
+                title: newTab //用于演
+                ,
+                content: '<iframe style="width: 100%;height:' + h + 'px;margin-top:0px;border:none;" scrolling="auto" src=' + tabUrl + ' ></iframe>'
+                ,
+                id: newTab //实际使用一般是规定好的id，这里以时间戳模拟下
+            })
+            element.tabChange("demo", newTab);
+        }
+
+        // 切换tab同时选中对应侧边栏
+        element.on('tab(demo)', function(data){
+            let layId = $(this).attr("lay-id");
+            //获取属性包含“tabs”的元素将其全部隐藏
+            let tabs = document.getElementsByName('tabs');
+            $(tabs).hide();
+            //移除被选中样式
+            let dds = document.querySelectorAll("dd");
+            $(dds).each(function () {
+                $(this).removeClass("layui-this")
+            })
+
+            $(tabs).each(function () {
+                let _this = this;
+                let ddItems = this.querySelectorAll("dd")
+                if(ddItems.length != 0){
+                    $(ddItems).each(function () {
+                        let title = $(this).attr("mytitle")
+                        if(title === layId){
+                            $(_this).show();
+                            $(this).addClass("layui-this")
+                        }
+                    })
+                }
+            })
+        });
+
         //触发事件
         var active = {
-            offset: function(othis) {
+            offset: function (othis) {
                 layer.confirm('您是否确认退出登陆？', {
-                    btn: ['是','否'] //按钮
-                }, function(){
-                    self.location="logout"
-                }, function(){
+                    btn: ['是', '否'] //按钮
+                }, function () {
+                    self.location = "logout"
+                }, function () {
                 });
             }
-            ,tabAdd: function(){
+            , tabAdd: function () {
                 //新增一个Tab项
-                var htmlurl=$(this).attr('data-url');
-                var mytitle=$(this).attr('mytitle');
+                var htmlurl = $(this).attr('data-url');
+                var mytitle = $(this).attr('mytitle');
 //                  alert("触发tab增加事件："+mytitle);
                 //先判断是否已经有了tab
                 var arrayObj = new Array();　//创建一个数组
-                $(".layui-tab-title").find('li').each(function() {
+                $(".layui-tab-title").find('li').each(function () {
                     var y = $(this).attr("lay-id");
                     arrayObj.push(y);
                 });
 //                    alert("遍历取到的数组："+arrayObj);
-                var have=$.inArray(mytitle, arrayObj);  //返回 3,
-                if (have>=0) {
+                var have = $.inArray(mytitle, arrayObj);  //返回 3,
+                if (have >= 0) {
                     //tab已有标签
 //                        alert("遍历的已有标签："+mytitle);
                     element.tabChange('demo', mytitle); //切换到当前点击的页面
-                } else{
-                    var h = $(window).height()-150;
+                } else {
+                    var h = $(window).height() - 150;
                     //没有相同tab
 //                      alert("遍历的没有相同tab："+mytitle);
                     element.tabAdd('demo', {
-                        title:mytitle //用于演
-                        ,content: '<iframe style="width: 100%;height:'+h+'px;margin-top:0px;border:none;" scrolling="auto" src='+htmlurl+' ></iframe>'
-                        ,id: mytitle //实际使用一般是规定好的id，这里以时间戳模拟下
+                        title: mytitle //用于演
+                        ,
+                        content: '<iframe style="width: 100%;height:' + h + 'px;margin-top:0px;border:none;" scrolling="auto" src=' + htmlurl + ' ></iframe>'
+                        ,
+                        id: mytitle //实际使用一般是规定好的id，这里以时间戳模拟下
                     })
                     element.tabChange('demo', mytitle); //切换到当前点击的页面
                 }
             }
 
         };
-        $('#layout').on('click', function(){
+        $('#layout').on('click', function () {
             var othis = $(this),
                 method = othis.data('method');
             active[method] ? active[method].call(this, othis) : '';
         });
-        $('#usericon').click(function () {
+        $('#userInfo').click(function () {
             var type = "tabAdd";
             var othis = $(this);
             var htmlurl= $(this).attr('data-url');
@@ -173,22 +231,38 @@
             active[type] ? active[type].call(this, othis) : '';
         });
         //这里是实现点击竖式选项卡，执行添加
-        $(".leftdaohang").click(function(){
-            var type="tabAdd";
+        $(".leftdaohang").click(function () {
+            var type = "tabAdd";
             var othis = $(this);
 //                var htmlurl=$(this).attr('data-url');
 //                var mytitle=$(this).attr('mytitle');
             active[type] ? active[type].call(this, othis) : '';
         });
         //这里是实现点击顶部选项卡之后，显示或隐藏对应的竖式选项卡
-        $('.showtab').click(function(){
-            var dataid=$(this).attr('data-id');
-            var dataids=document.getElementById(dataid);
-            var tabs=document.getElementsByName('tabs');
+        $('.showtab').click(function () {
+            let dataid = $(this).attr('data-id');
+            let dataids = document.getElementById(dataid);
+            let tabs = document.getElementsByName('tabs');
             $(tabs).hide();
             $(dataids).show();
+            let ddList = dataids.querySelectorAll("dd");
+            $(ddList[0]).addClass("layui-this")
+            active['tabAdd'] ? active['tabAdd'].call(ddList[0], $(ddList[0])) : '';
         })
     });
+
+
+    /*function openUserInfo() {
+        layer.open({
+            type: 2,
+            title: '个人信息',
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['800px', '540px'],
+            content: 'editUser'
+        });
+    }*/
 </script>
 </body>
 </html>

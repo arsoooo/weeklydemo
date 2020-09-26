@@ -19,6 +19,9 @@ public interface ProjectmemberMapper extends BaseMapper<Projectmember> {
     @Select("select pid from projectmember where uid = #{uid}")
     public List<Integer> findPidsByUid(int uid);
 
+    @Select("select * from projectmember where pid = #{pid} and uid = #{uid}")
+    public Projectmember getByPidAndUid(int pid, int uid);
+
     @Delete("delete from projectmember where pid = #{pid} and uid = #{uid}")
     public Integer delProjectMemberByPidAndUid(int pid, int uid);
 }

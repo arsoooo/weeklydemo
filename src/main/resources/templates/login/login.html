@@ -10,6 +10,15 @@
     <script src="layer/layer.js"></script>
     <script src="layui/layui.js" charset="utf-8"></script>
     <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <style>
+        .register{
+            position: absolute;
+            right: 10px;
+            bottom: -20px;
+            color: #D0D0D0;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body background="img/login/1.jpg">
 
@@ -50,9 +59,14 @@
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button class="layui-btn" onclick="return false" lay-submit lay-filter="login">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                <button type="button" class="layui-btn layui-btn-normal" onclick="toRegister()">注册</button>
+                <button class="layui-btn" style="width: 190px" onclick="return false" lay-submit lay-filter="login">立即提交</button>
+                <!--                <button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+                <!--                <button type="button" class="layui-btn layui-btn-normal" onclick="toRegister()">注册</button>-->
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <a class="register" href="toRegister">注册新账号</a>
             </div>
         </div>
     </form>

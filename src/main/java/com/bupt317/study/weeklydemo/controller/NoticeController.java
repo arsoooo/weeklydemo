@@ -49,8 +49,8 @@ public class NoticeController {
      * 查看所有的公告
      */
     @GetMapping("/admin/notices")
-    public DataVO listNotices(){
-        return noticeService.findData();
+    public DataVO listNotices(Integer page, Integer limit){
+        return noticeService.findData(page, limit);
     }
 
     /**
@@ -113,9 +113,9 @@ public class NoticeController {
      * 获取当前用户的所有消息公告
      */
     @GetMapping("/notices/user")
-    public DataVO findUserNotice(){
+    public DataVO findUserNotice(Integer page, Integer limit){
         User user = userService.getLoginDBUser() ;
-        return noticeService.findDataByUid(user.getId());
+        return noticeService.findDataByUid(user.getId(),page, limit);
     }
 
     /**

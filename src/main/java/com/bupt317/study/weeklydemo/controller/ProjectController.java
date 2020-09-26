@@ -111,7 +111,7 @@ public class ProjectController {
         List<UserVO> addUserVOList = JsonUtil.jsonStr2UserVOList(addUsers);
         for (UserVO userVO : addUserVOList) {
             // 根据pid和uid增加projectmember
-            projectmemberService.addProjectmember(new Projectmember(dbProject.getId(), userVO.getId()));
+            projectmemberService.addProjectmember(new Projectmember(dbProject.getId(), userVO.getId(), "新增人员"));
         }
         return DataVO.success();
     }
@@ -123,8 +123,8 @@ public class ProjectController {
      * 查看所有项目
      */
     @GetMapping("/admin/projects")
-    public DataVO findProjects(){
-        return projectService.findData();
+    public DataVO findProjects(Integer page, Integer limit){
+        return projectService.findData(page, limit);
     }
 
     /**
@@ -132,8 +132,8 @@ public class ProjectController {
      * 查看一个用户的所有项目
      */
     @GetMapping("/admin/projects/users/{uid}")
-    public DataVO findProjectsByUid(@PathVariable("uid") int uid){
-        return projectService.findDataByUid(uid);
+    public DataVO findProjectsByUid(@PathVariable("uid") int uid, Integer page, Integer limit){
+        return projectService.findDataByUid(uid, page, limit);
     }
 
     /**
@@ -153,9 +153,9 @@ public class ProjectController {
      * 根据登录用户，查询用户的所有项目
      */
     @GetMapping("/projects/users")
-    public DataVO findProjectsByLoginUid(){
+    public DataVO findProjectsByLoginUid(Integer page, Integer limit){
         User user = userService.getLoginDBUser();
-        return projectService.findDataByUid(user.getId());
+        return projectService.findDataByUid(user.getId(), page, limit);
     }
 
 }

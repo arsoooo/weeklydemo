@@ -11,11 +11,11 @@
 
 <div id="tableData" lay-filter="tableData"></div>
 
-
 <script type="text/html" id="toolbar">
     <div class="layui-btn layui-btn-sm" lay-event="see">查看内容</div>
     <div class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</div>
 </script>
+
 <script>
     layui.use(['layer', 'table'], function () {
         let layer = layui.layer,
@@ -37,6 +37,7 @@
 
                 ]
             ]
+            ,page: true
         })
 
         table.on("tool(tableData)", function (obj) {

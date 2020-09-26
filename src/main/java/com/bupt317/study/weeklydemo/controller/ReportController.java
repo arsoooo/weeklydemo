@@ -33,8 +33,8 @@ public class ReportController {
      * 获得所有周报信息
      */
     @GetMapping("/admin/reports")
-    public DataVO findReports(){
-        return reportService.findData();
+    public DataVO findReports(Integer page, Integer limit){
+        return reportService.findData(page, limit);
     }
 
     /**
@@ -51,8 +51,8 @@ public class ReportController {
      * 通过uid获得用户的所有周报
      */
     @GetMapping("/admin/reports/users/{uid}")
-    public DataVO findUserReportByUid(@PathVariable("uid") int uid){
-        return reportService.findDataByUid(uid);
+    public DataVO findUserReportByUid(@PathVariable("uid") int uid, Integer page, Integer limit){
+        return reportService.findDataByUid(uid, page, limit);
     }
 
     /**
@@ -103,10 +103,10 @@ public class ReportController {
      * 根据当前登录用户获得其所有周报
      */
     @GetMapping("/reports")
-    public DataVO findUserReportByLoginUid(){
+    public DataVO findUserReportByLoginUid(Integer page, Integer limit){
         // 通过登录用户的id去查，而不是传过来的id，这和管理员不同
         User user = userService.getLoginDBUser();
-        return reportService.findDataByUid(user.getId());
+        return reportService.findDataByUid(user.getId(), page, limit);
     }
 
     /**
